@@ -17,6 +17,18 @@ TIME_STEP = 64;
 %  wb_camera_enable(camera, TIME_STEP);
 %  motor = wb_robot_get_device('motor');
 
+  WbDeviceTag wheels[4];
+  char wheels_names[4][8] = {"wheel1", "wheel2", "wheel3", "wheel4"};
+  for (i = 0; i < 4; i++) {
+    wheels[i] = wb_robot_get_device(wheels_names[i]);
+    wb_motor_set_position(wheels[i], INFINITY);
+  }
+  
+    wb_motor_set_velocity(wheels[0], left_speed);
+    wb_motor_set_velocity(wheels[1], right_speed);
+    wb_motor_set_velocity(wheels[2], left_speed);
+    wb_motor_set_velocity(wheels[3], right_speed);
+
 % main loop:
 % perform simulation steps of TIME_STEP milliseconds
 % and leave the loop when Webots signals the termination
