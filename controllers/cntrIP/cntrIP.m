@@ -1,5 +1,5 @@
 % MATLAB controller for Webots
-% File:          amazingcontroler.m
+% File:          cntrIP.m
 % Date:
 % Description:
 % Author:
