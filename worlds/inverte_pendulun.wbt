@@ -3,8 +3,8 @@ WorldInfo {
   coordinateSystem "NUE"
 }
 Viewpoint {
-  orientation -0.5486595448723635 -0.8329427102491345 0.0719662786538062 0.4386406254448199
-  position -0.5263648710852706 0.5326526664670151 1.3344972264363228
+  orientation 0.6331878073661119 -0.7205826591055324 -0.2825488134806012 5.8853916611267465
+  position 0.2573356339307572 0.5862001019113204 1.1406549506828065
   follow "robot"
 }
 TexturedBackground {
@@ -15,6 +15,9 @@ Robot {
   translation -1.80309e-12 0.41 -5.43899e-09
   rotation -6.180701830239702e-09 0.9999999999999999 6.1827213635154806e-09 -1.5704599999999682
   children [
+    Receiver {
+      channel 1
+    }
     DEF IMU InertialUnit {
       translation 0 0.01 0
       name "IMU"
@@ -155,7 +158,7 @@ DEF FLOOR Solid {
       appearance BlanketFabric {
       }
       geometry DEF FLOOR_GEOM Box {
-        size 10 0.05 4
+        size 400 0.05 4
       }
     }
   ]
@@ -166,10 +169,13 @@ DEF valec Robot {
   translation 0 0.17 0
   rotation 1 0 0 -1.5707953071795862
   children [
+    Emitter {
+      channel 1
+    }
     Gyro {
     }
     Shape {
-      appearance CarpetFibers {
+      appearance CorrugatedMetal {
       }
       geometry DEF CYL_GEOM Cylinder {
         height 0.5
@@ -190,4 +196,5 @@ DEF valec Robot {
       0 0 0
     ]
   }
+  controller "valec_controler"
 }
