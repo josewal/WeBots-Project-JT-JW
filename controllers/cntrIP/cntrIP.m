@@ -1,7 +1,7 @@
-TIME_STEP = 64;
+TIME_STEP = 32;
 
-sensor = wb_robot_get_device(convertStringsToChars("angle_sensor"));
-wb_position_sensor_enable(sensor, TIME_STEP);
+sensor = wb_robot_get_device(convertStringsToChars("IMU"));
+wb_inertial_unit_enable(sensor, TIME_STEP);
 
 wheels = [];
 wheels_names = [ "wheel1", "wheel2", "wheel3", "wheel4" ];
@@ -13,48 +13,36 @@ end
 
 theta = [];
 
-p = 0; 
-i = 0;
-d = 0;
+p = zeros(1, 50);
+i = zeros(1, 50);
+d = zeros(1, 50);
 
-Kp = 100;
-Ki = 25;
+Kp = 75;
+Ki = 10;
 Kd = 0;
 
 input = [];
-prev_input = 0;
-setpoint = 0;
-dir_flag = true
+setpoint = 0.07;
+
+data = zeros(1, 50);
 
 while wb_robot_step(TIME_STEP) ~= -1
-  left_speed = 0;
-  right_speed = 0;
   
-  theta = wb_position_sensor_get_value(sensor);
+  theta = wb_inertial_unit_get_roll_pitch_yaw(sensor);
+  theta = theta(1);
+  
   input = theta - setpoint;
   
-  p = input;
-  i = i + input;
-  d = input - prev_input;
+  p = [p(2:end), input];
+  i = [i(2:end), sum(p(end-49:end))];
+  d = [d(2:end), input - p(end-1)];
   
-  speed = (Kp * p / 1) + (Ki * i / 1) + (Kd * d / 1);
+  speed = (Kp * p(end) / 1) + (Ki * i(end) / 1) + (Kd * d(end) / 1);
+  speed = -speed; 
   
+  wb_console_print(sprintf('Sensor value: %f\n', speed), WB_STDOUT);
   
-  wb_console_print(sprintf('Sensor value: %f\n', theta), WB_STDOUT);
-  
-  prev_input = input;
-  
-  if (setpoint > 0.02)
-    dir_flag = false;
-  elseif (setpoint < -0.02)
-    dir_flag = true;
-  end
-  
-  if dir_flag
-    setpoint = setpoint + 0.002;
-  else
-    setpoint = setpoint - 0.002;
-  end
+  %data = [data(2:end), input];
   
   wb_motor_set_velocity(wheels(1), speed);
   wb_motor_set_velocity(wheels(2), speed);

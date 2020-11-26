@@ -3,20 +3,26 @@ WorldInfo {
   coordinateSystem "NUE"
 }
 Viewpoint {
-  orientation 0.02274772402402569 0.9996640519706252 0.012422731156961832 3.181532774656471
-  position -1.8702192429984745 0.19681741830847285 -1.8228001952754627
+  orientation 0.6623466159724404 0.31995901062625487 -0.6774386996835395 6.1757982423757305
+  position 0.009503829110356986 0.3756516202873009 4.262771709949053
   follow "robot"
 }
 TexturedBackground {
 }
 TexturedBackgroundLight {
 }
-Floor {
-}
 Robot {
-  translation -1.8135076587067755 0.03964930926021508 0.49854411241112645
-  rotation 0.001496310372973604 0.9999977151384211 0.0015266870030204956 -1.5704634122744026
+  translation -1.80309e-12 0.41 -5.43899e-09
+  rotation -6.180701830239702e-09 0.9999999999999999 6.1827213635154806e-09 -1.5704599999999682
   children [
+    DEF IMU InertialUnit {
+      translation 0 0.01 0
+      name "IMU"
+      boundingObject Shape {
+        appearance GalvanizedMetal {
+        }
+      }
+    }
     DEF BODY Shape {
       appearance PBRAppearance {
         baseColor 0.917647 0.145098 0.145098
@@ -27,63 +33,9 @@ Robot {
         size 0.1 0.05 0.2
       }
     }
-    Transform {
-      translation -0.02 0.03 0
-      children [
-        HingeJoint {
-          jointParameters HingeJointParameters {
-            anchor 0.5 0 0
-          }
-          device [
-            PositionSensor {
-              name "angle_sensor"
-            }
-          ]
-          endPoint DEF STICK Solid {
-            translation 0.019999989764104498 0.15999983821848535 1.0830634999958733e-11
-            rotation 4.0762126445773354e-05 0.02672546283621861 0.9996428101950412 5.960464477539063e-08
-            children [
-              Transform {
-                children [
-                  DEF STICK Shape {
-                    appearance PBRAppearance {
-                      baseColor 0 1 1
-                      metalness 0
-                    }
-                    geometry DEF STICK_SHAPE Cylinder {
-                      height 0.3
-                      radius 0.005
-                    }
-                  }
-                ]
-              }
-            ]
-            name "stick"
-            boundingObject USE STICK_SHAPE
-            physics DEF STICK_STICK Physics {
-              mass 1
-              centerOfMass [
-                0 0.5 0
-              ]
-              damping DEF STICK Damping {
-              }
-            }
-          }
-        }
-        DEF HINGE_BODY Shape {
-          appearance PBRAppearance {
-            baseColor 0 0 1
-            metalness 0
-          }
-          geometry Box {
-            size 0.02 0.06 0.05
-          }
-        }
-      ]
-    }
     DEF WHEEL1 HingeJoint {
       jointParameters HingeJointParameters {
-        position 349.5280055532794
+        position 349.5280055712788
         anchor 0.06 0 0.05
       }
       device [
@@ -94,7 +46,7 @@ Robot {
       ]
       endPoint Solid {
         translation 0.06 0 0.05
-        rotation -1 0 0 2.3303716487774433
+        rotation -1 0 0 2.3303716307780316
         children [
           DEF WHEEL Transform {
             rotation 0 0 1 1.5708
@@ -121,7 +73,7 @@ Robot {
     }
     DEF WHEEL2 HingeJoint {
       jointParameters HingeJointParameters {
-        position 194.5032157415205
+        position 194.50321575987954
         anchor -0.06 0 0.05
       }
       device [
@@ -132,7 +84,7 @@ Robot {
       ]
       endPoint Solid {
         translation -0.06 0 0.05
-        rotation 1 0 0 6.007656526132911
+        rotation 1 0 0 6.007656544491944
         children [
           USE WHEEL
         ]
@@ -144,7 +96,7 @@ Robot {
     }
     DEF WHEEL3 HingeJoint {
       jointParameters HingeJointParameters {
-        position 349.52801448462463
+        position 349.5280144662652
         anchor 0.06 0 -0.05
       }
       device [
@@ -155,7 +107,7 @@ Robot {
       ]
       endPoint Solid {
         translation 0.06 0 -0.05
-        rotation -1 0 0 2.3303627174322084
+        rotation -1 0 0 2.3303627357916663
         children [
           USE WHEEL
         ]
@@ -167,7 +119,7 @@ Robot {
     }
     DEF WHEEL4 HingeJoint {
       jointParameters HingeJointParameters {
-        position 194.503223798399
+        position 194.5032237803993
         anchor -0.06 0 -0.05
       }
       device [
@@ -178,7 +130,7 @@ Robot {
       ]
       endPoint Solid {
         translation -0.06 0 -0.05
-        rotation 1 0 0 6.007664583011412
+        rotation 1 0 0 6.007664565011715
         children [
           USE WHEEL
         ]
@@ -188,40 +140,6 @@ Robot {
         }
       }
     }
-    DEF DS_RIGHT DistanceSensor {
-      translation -0.03 0 0.1
-      rotation 0 1 0 -1.87079
-      children [
-        Shape {
-          appearance PBRAppearance {
-            baseColor 0.184314 0.596078 0.847059
-            roughness 1
-            metalness 0
-          }
-          geometry Box {
-            size 0.01 0.01 0.01
-          }
-        }
-      ]
-      name "ds_right"
-    }
-    DEF DS_LEFT DistanceSensor {
-      translation 0.03 0 0.1
-      rotation 0 1 0 -1.27079
-      children [
-        Shape {
-          appearance PBRAppearance {
-            baseColor 0.184314 0.596078 0.847059
-            roughness 1
-            metalness 0
-          }
-          geometry Box {
-            size 0.01 0.01 0.01
-          }
-        }
-      ]
-      name "ds_left"
-    }
   ]
   boundingObject USE BODY
   physics Physics {
@@ -229,4 +147,44 @@ Robot {
     mass 1
   }
   controller "cntrIP"
+}
+DEF CYLINDER Solid {
+  translation 0 0.17 1.73333e-07
+  rotation 1 0 0 -1.5707953071795862
+  children [
+    Shape {
+      appearance CarpetFibers {
+      }
+      geometry DEF CYL_GEOM Cylinder {
+        height 0.5
+        radius 0.2
+      }
+    }
+  ]
+  boundingObject USE CYL_GEOM
+  physics Physics {
+    density -1
+    mass 2
+    centerOfMass [
+      0 0 0
+    ]
+    inertiaMatrix [
+      15.2891 20.1062 15.2891
+      0 0 0
+    ]
+  }
+}
+DEF FLOOR Solid {
+  translation 0 -0.06 0
+  children [
+    Shape {
+      appearance BlanketFabric {
+      }
+      geometry DEF FLOOR_GEOM Box {
+        size 10 0.05 4
+      }
+    }
+  ]
+  name "solid(1)"
+  boundingObject USE FLOOR_GEOM
 }
