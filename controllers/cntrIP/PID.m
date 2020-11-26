@@ -4,20 +4,20 @@ classdef PID < handle
         p = zeros(1, 50);
         i = zeros(1, 50);
         d = zeros(1, 50);
-        output (1,1) {mustBeNumeric};
+        output {mustBeNumeric};
+        error {mustBeNumeric};
     end
     
     properties
-        Kp (1,1) {mustBeNumeric};
-        Ki (1,1) {mustBeNumeric};
-        Kd (1,1) {mustBeNumeric};
-        input (1,1) {mustBeNumeric};
-        setpoint (1,1) {mustBeNumeric};
+        Kp {mustBeNumeric};
+        Ki {mustBeNumeric};
+        Kd {mustBeNumeric};
+        input {mustBeNumeric};
+        setpoint {mustBeNumeric};
     end
     
     
     methods
-        
         function this = PID(Kp,Ki,Kd)
             this.Kp = Kp;
             this.Ki = Ki;
@@ -27,9 +27,9 @@ classdef PID < handle
         end
         
         function compute(this)
-            this.p = [this.p(2:end), this.input];
-            this.i = [this.i(2:end), sum(this.p(end-49:end))];
-            this.d = [this.d(2:end), this.input - this.p(end-1)];
+            this.p = [this.p(2:end), this.error];
+            this.i = [this.i(2:end), sum(this.p(end-30:end))];
+            this.d = [this.d(2:end), this.error - this.p(end-1)];
             
             this.output = (this.Kp * this.p(end) / 1)...
                 + (this.Ki * this.i(end) / 1)...
@@ -37,8 +37,9 @@ classdef PID < handle
         end
         
         function update(this,input,setpoint)
-            this.input = input;
             this.setpoint = setpoint;
+            this.input = input;
+            this.error = this.input - this.setpoint;
         end    
     end
 end

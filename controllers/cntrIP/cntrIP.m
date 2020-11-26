@@ -1,3 +1,5 @@
+desktop
+
 TIME_STEP = 32;
 
 sensor = wb_robot_get_device(convertStringsToChars("IMU"));
@@ -17,59 +19,41 @@ end
 theta = [];
 real_speed = 0;
 
-p = zeros(1, 50);
-i = zeros(1, 50);
-d = zeros(1, 50);
-
-Kp = 50;
-Ki = 10;
-Kd = 0;
-
-input = [];
-setpoint = 0.1;
-
-p = zeros(1, 50);
-i = zeros(1, 50);
-d = zeros(1, 50);
-
-Kp = 50;
-Ki = 10;
-Kd = 0;
-
-input = [];
-setpoint = 0.1;
-
-
+pitch = PID(50, 10, 0);
+spPID = PID(1, 0, 0);
 
 msg = [];
 while wb_robot_step(TIME_STEP) ~= -1
 
   while wb_receiver_get_queue_length(receiver) > 0
-  msg = wb_receiver_get_data(receiver, 'double');
+  pointer = wb_receiver_get_data(receiver);
+  setdatatype(pointer, 'doublePtr', 1, 1);
+  msg = get(pointer, 'Value');
   wb_receiver_next_packet(receiver);
   end
-
+  
   real_speed = msg;
+  
   theta = wb_inertial_unit_get_roll_pitch_yaw(sensor);
-  theta = theta(1);
+  theta = theta;
   
-  input = theta - setpoint;
   
-  p = [p(2:end), input];
-  i = [i(2:end), sum(p(end-49:end))];
-  d = [d(2:end), input - p(end-1)];
+  setpoint = 1;
   
-  speed = (Kp * p(end) / 1) + (Ki * i(end) / 1) + (Kd * d(end) / 1);
-  speed = -speed; 
+  spPID.update(real_speed, setpoint);
+  spPID.compute();
   
-  wb_console_print(sprintf('Sensor value: %f\n', msg), WB_STDOUT);
+  pitch.update(theta, spPID.output);
+  pitch.compute();
   
-  %data = [data(2:end), input];
+  speed = -pitch.output; 
+  
+  %wb_console_print(sprintf('Sensor value: %f\n', msg), WB_STDOUT);
+  
   
   wb_motor_set_velocity(wheels(1), speed);
   wb_motor_set_velocity(wheels(2), speed);
   wb_motor_set_velocity(wheels(3), speed);
   wb_motor_set_velocity(wheels(4), speed);
-  % if your code plots some graphics, it needs to flushed like this:
   drawnow;
 end
