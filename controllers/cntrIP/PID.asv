@@ -17,7 +17,6 @@ classdef PID < handle
     
     
     methods
-        
         function this = PID(Kp,Ki,Kd)
             this.Kp = Kp;
             this.Ki = Ki;
@@ -31,14 +30,10 @@ classdef PID < handle
             this.i = [this.i(2:end), sum(this.p(end-49:end))];
             this.d = [this.d(2:end), this.input - this.p(end-1)];
             
-            this.output = (this.Kp * this.p(end) / 1)...
-                + (this.Ki * this.i(end) / 1)...
-                + (this.Kd * this.d(end) / 1);
+            this.speed = (this.Kp * this.p(end) / 1) + (Ki * i(end) / 1) + (Kd * d(end) / 1);
         end
         
-        function update(this,input,setpoint)
-            this.input = input;
-            this.setpoint = setpoint;
-        end    
     end
+    
+    
 end
