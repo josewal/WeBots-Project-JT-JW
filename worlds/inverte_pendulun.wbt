@@ -3,8 +3,8 @@ WorldInfo {
   coordinateSystem "NUE"
 }
 Viewpoint {
-  orientation 0.6623466159724404 0.31995901062625487 -0.6774386996835395 6.1757982423757305
-  position 0.009503829110356986 0.3756516202873009 4.262771709949053
+  orientation -0.5486595448723635 -0.8329427102491345 0.0719662786538062 0.4386406254448199
+  position -0.5263648710852706 0.5326526664670151 1.3344972264363228
   follow "robot"
 }
 TexturedBackground {
@@ -148,32 +148,6 @@ Robot {
   }
   controller "cntrIP"
 }
-DEF CYLINDER Solid {
-  translation 0 0.17 1.73333e-07
-  rotation 1 0 0 -1.5707953071795862
-  children [
-    Shape {
-      appearance CarpetFibers {
-      }
-      geometry DEF CYL_GEOM Cylinder {
-        height 0.5
-        radius 0.2
-      }
-    }
-  ]
-  boundingObject USE CYL_GEOM
-  physics Physics {
-    density -1
-    mass 2
-    centerOfMass [
-      0 0 0
-    ]
-    inertiaMatrix [
-      15.2891 20.1062 15.2891
-      0 0 0
-    ]
-  }
-}
 DEF FLOOR Solid {
   translation 0 -0.06 0
   children [
@@ -187,4 +161,33 @@ DEF FLOOR Solid {
   ]
   name "solid(1)"
   boundingObject USE FLOOR_GEOM
+}
+DEF valec Robot {
+  translation 0 0.17 0
+  rotation 1 0 0 -1.5707953071795862
+  children [
+    Gyro {
+    }
+    Shape {
+      appearance CarpetFibers {
+      }
+      geometry DEF CYL_GEOM Cylinder {
+        height 0.5
+        radius 0.2
+      }
+    }
+  ]
+  name "valec"
+  boundingObject USE CYL_GEOM
+  physics Physics {
+    density -1
+    mass 5
+    centerOfMass [
+      0 0 0
+    ]
+    inertiaMatrix [
+      1.937315469713706 1.2566370614359177 1.937315469713706
+      0 0 0
+    ]
+  }
 }
