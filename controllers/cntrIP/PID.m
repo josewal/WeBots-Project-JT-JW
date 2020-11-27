@@ -1,24 +1,20 @@
 classdef PID < handle
     
     properties (SetAccess = private)
-        p = zeros(1, 50);
-        i = zeros(1, 50);
-        d = zeros(1, 50);
+        p = zeros(1, 30);
+        i = zeros(1, 30);
+        d = zeros(1, 30);
+        input {mustBeNumeric};
+        setpoint {mustBeNumeric}; 
         output {mustBeNumeric};
         error {mustBeNumeric};
         limits (1,2){mustBeNumeric};
-        enable_bool 
-    end
-    
-    properties
+        enable_bool
         Kp {mustBeNumeric};
         Ki {mustBeNumeric};
         Kd {mustBeNumeric};
-        input {mustBeNumeric};
-        setpoint {mustBeNumeric};
     end
-    
-    
+      
     methods
         function this = PID(Kp,Ki,Kd)
             this.Kp = Kp;
@@ -50,11 +46,16 @@ classdef PID < handle
             this.setpoint = setpoint;
             this.input = input;
             this.error = this.input - this.setpoint;
+            
             if this.enable_bool
               this.compute();
             else
               this.output = 0;
             end
+        end
+        
+        function setSetpoint(this,setpoint)
+            this.setpoint = setpoint;
         end
         
         function setLimits(this,min,max)

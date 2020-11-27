@@ -8,8 +8,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.8159484039640051 -0.3119207786220522 -0.4867582869683939 5.812545844257254
-  position 0.29539271088511776 1.4256752500863765 2.405191323121185
+  orientation -0.09215108146616337 -0.9857951326168606 -0.14041415417799927 3.224897277632265
+  position 0.12150723666721805 1.775623022603168 -4.915014764300799
   follow "robot"
 }
 TexturedBackground {
@@ -26,8 +26,9 @@ Robot {
         Shape {
           appearance Grass {
           }
-          geometry DEF WEIGHT_GEOM Sphere {
-            radius 0.2
+          geometry DEF WEIGHT_GEOM Cylinder {
+            height 1
+            radius 0.17
           }
         }
       ]
@@ -35,7 +36,7 @@ Robot {
       boundingObject USE WEIGHT_GEOM
       physics Physics {
         density -1
-        mass 33.51032163829113
+        mass 30
         centerOfMass [
           0 0 0
         ]

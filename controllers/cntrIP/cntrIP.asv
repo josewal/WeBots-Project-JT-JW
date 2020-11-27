@@ -10,9 +10,8 @@ wb_receiver_enable(receiver, TIME_STEP)
 
 
 motor_tags = ["wheel1", "wheel2", "wheel3", "wheel4"];
-for i = 1:4
-    motors(i) = Motor(motor_tags(i));
-end
+for i = 1:
+motors(i) = Motor(motor
 
 setpoint = 0;
 speedPID = PID(0.001, 0.001,0);
@@ -31,19 +30,17 @@ while wb_robot_step(TIME_STEP) ~= -1
         wb_receiver_next_packet(receiver);
     end
     
-    velocity = msg;
+    real_speed = msg;
     pitch_roll_yaw = wb_inertial_unit_get_roll_pitch_yaw(sensor);
     pitch = pitch_roll_yaw(1);
     
-    speedPID.update(velocity, setpoint);
-    desired_pitch = speedPID.output;
+    speedPID.update(real_speed, setpoint);
     
-    pitchPID.update(pitch, desired_pitch);
-    desired_motor_speed = pitchPID.output;
+    pitchPID.update(pitch, speedPID.output);
     
     
     for i = 1:length(motors)
-        motors(i).run(-desired_motor_speed);
+        motors(i).run(-pitchPID.output);
     end
     
     drawnow;
