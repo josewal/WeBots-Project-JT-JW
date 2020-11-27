@@ -14,10 +14,10 @@ for i = 1:4
     motors(i) = Motor(motor_tags(i));
 end
 
-setpoint = 0;
-speedPID = PID(0.001, 0.001,0);
+setpoint = 0.5;
+speedPID = PID(0.01, 0.001,0);
 speedPID.setLimits(-0.1, 0.1);
-speedPID.disable();
+speedPID.enable();
 
 pitchPID = PID(100, 7, 0.5);
 
