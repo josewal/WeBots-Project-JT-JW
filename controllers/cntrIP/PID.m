@@ -7,6 +7,7 @@ classdef PID < handle
         output {mustBeNumeric};
         error {mustBeNumeric};
         limits (1,2){mustBeNumeric};
+        enable_bool 
     end
     
     properties
@@ -26,11 +27,12 @@ classdef PID < handle
             this.setpoint = 0;
             this.input = 0;
             this.limits = [-inf, inf];
+            this.enable_bool = true;
         end
         
         function compute(this)
             this.p = [this.p(2:end), this.error];
-            this.i = [this.i(2:end), sum(this.p(end-40:end))];
+            this.i = [this.i(2:end), this.i(end) + this.p(end)];
             this.d = [this.d(2:end), this.error - this.p(end-1)];
             
             this.output = (this.Kp * this.p(end) / 1)...
@@ -48,10 +50,23 @@ classdef PID < handle
             this.setpoint = setpoint;
             this.input = input;
             this.error = this.input - this.setpoint;
+            if this.enable_bool
+              this.compute();
+            else
+              this.output = 0;
+            end
         end
         
         function setLimits(this,min,max)
             this.limits = [min, max];
+        end
+        
+        function enable(this)
+        this.enable_bool = true;
+        end
+        
+        function disable(this)
+        this.enable_bool = false;
         end
     end
 end
