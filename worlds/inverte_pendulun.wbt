@@ -3,8 +3,8 @@ WorldInfo {
   coordinateSystem "NUE"
 }
 Viewpoint {
-  orientation 0.7633178826690612 -0.1656550869846852 -0.6244230954679026 6.163206054648087
-  position -0.1935420710867478 0.6629064546516855 2.1518498854203596
+  orientation 0.9002482468399003 -0.2533442758720782 -0.3540759409286911 5.299693646548434
+  position 0.2980532485822349 2.152833942359446 1.2567554794447326
   follow "robot"
 }
 TexturedBackground {
@@ -12,9 +12,8 @@ TexturedBackground {
 TexturedBackgroundLight {
 }
 Robot {
-  translation 0 0.64 0
-  rotation -6.180701830239702e-09 0.9999999999999999 6.1827213635154806e-09 -1.5704599999999682
-  scale 2 2 2
+  translation 0 0.592931 0
+  rotation 0 1 0 -1.5641466299726126
   children [
     Receiver {
       channel 1
@@ -39,8 +38,7 @@ Robot {
     }
     DEF WHEEL1 HingeJoint {
       jointParameters HingeJointParameters {
-        position 349.5280055712788
-        anchor 0.06 0 0.05
+        anchor 0.06 -0.07 0.25
       }
       device [
         RotationalMotor {
@@ -49,8 +47,8 @@ Robot {
         }
       ]
       endPoint Solid {
-        translation 0.06 0 0.05
-        rotation -1 0 0 2.3303716307780316
+        translation 0.15 -0.07 0.25
+        rotation 1 0 0 0
         children [
           DEF WHEEL Transform {
             rotation 0 0 1 1.5708
@@ -63,7 +61,7 @@ Robot {
                 }
                 geometry Cylinder {
                   height 0.02
-                  radius 0.04
+                  radius 0.06
                   subdivision 50
                 }
               }
@@ -77,8 +75,8 @@ Robot {
     }
     DEF WHEEL2 HingeJoint {
       jointParameters HingeJointParameters {
-        position 194.50321575987954
-        anchor -0.06 0 0.05
+        position 1761.0553335611894
+        anchor -0.06 -0.07 0.25
       }
       device [
         RotationalMotor {
@@ -87,8 +85,8 @@ Robot {
         }
       ]
       endPoint Solid {
-        translation -0.06 0 0.05
-        rotation 1 0 0 6.007656544491944
+        translation -0.15 -0.07 0.25
+        rotation 0.9999999999458121 9.27174479256132e-06 -4.733966376302296e-06 2.1314524330565616
         children [
           USE WHEEL
         ]
@@ -100,8 +98,8 @@ Robot {
     }
     DEF WHEEL3 HingeJoint {
       jointParameters HingeJointParameters {
-        position 349.5280144662652
-        anchor 0.06 0 -0.05
+        position 1916.0802408051923
+        anchor 0.06 -0.07 -0.25
       }
       device [
         RotationalMotor {
@@ -110,8 +108,8 @@ Robot {
         }
       ]
       endPoint Solid {
-        translation 0.06 0 -0.05
-        rotation -1 0 0 2.3303627357916663
+        translation 0.15 -0.07 -0.25
+        rotation 0.9999999717792875 0.00020185068481668036 0.00012529056501845774 0.07672583813348349
         children [
           USE WHEEL
         ]
@@ -123,8 +121,8 @@ Robot {
     }
     DEF WHEEL4 HingeJoint {
       jointParameters HingeJointParameters {
-        position 194.5032237803993
-        anchor -0.06 0 -0.05
+        position 1761.0554515389808
+        anchor -0.06 -0.07 -0.25
       }
       device [
         RotationalMotor {
@@ -133,8 +131,8 @@ Robot {
         }
       ]
       endPoint Solid {
-        translation -0.06 0 -0.05
-        rotation 1 0 0 6.007664565011715
+        translation -0.15 -0.07 -0.25
+        rotation 0.999999999945802 9.273550636857881e-06 -4.73257991801614e-06 2.131569046943568
         children [
           USE WHEEL
         ]
@@ -167,7 +165,7 @@ DEF FLOOR Solid {
   boundingObject USE FLOOR_GEOM
 }
 DEF valec Robot {
-  translation 0 0.27 0
+  translation 0 0.258551 0
   rotation 1 0 0 -1.5707953071795862
   children [
     Emitter {
