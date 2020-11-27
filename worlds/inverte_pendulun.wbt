@@ -3,8 +3,8 @@ WorldInfo {
   coordinateSystem "NUE"
 }
 Viewpoint {
-  orientation 0.6331878073661119 -0.7205826591055324 -0.2825488134806012 5.8853916611267465
-  position 0.2573356339307572 0.5862001019113204 1.1406549506828065
+  orientation 0.7633178826690612 -0.1656550869846852 -0.6244230954679026 6.163206054648087
+  position -0.1935420710867478 0.6629064546516855 2.1518498854203596
   follow "robot"
 }
 TexturedBackground {
@@ -12,8 +12,9 @@ TexturedBackground {
 TexturedBackgroundLight {
 }
 Robot {
-  translation -1.80309e-12 0.41 -5.43899e-09
+  translation 0 0.64 0
   rotation -6.180701830239702e-09 0.9999999999999999 6.1827213635154806e-09 -1.5704599999999682
+  scale 2 2 2
   children [
     Receiver {
       channel 1
@@ -63,7 +64,7 @@ Robot {
                 geometry Cylinder {
                   height 0.02
                   radius 0.04
-                  subdivision 24
+                  subdivision 50
                 }
               }
             ]
@@ -166,7 +167,7 @@ DEF FLOOR Solid {
   boundingObject USE FLOOR_GEOM
 }
 DEF valec Robot {
-  translation 0 0.17 0
+  translation 0 0.27 0
   rotation 1 0 0 -1.5707953071795862
   children [
     Emitter {
@@ -179,7 +180,8 @@ DEF valec Robot {
       }
       geometry DEF CYL_GEOM Cylinder {
         height 0.5
-        radius 0.2
+        radius 0.3
+        subdivision 100
       }
     }
   ]
@@ -187,7 +189,7 @@ DEF valec Robot {
   boundingObject USE CYL_GEOM
   physics Physics {
     density -1
-    mass 5
+    mass 4
     centerOfMass [
       0 0 0
     ]

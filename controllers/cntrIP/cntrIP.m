@@ -1,6 +1,4 @@
-desktop
-
-TIME_STEP = 32;
+TIME_STEP = 16;
 
 sensor = wb_robot_get_device(convertStringsToChars("IMU"));
 wb_inertial_unit_enable(sensor, TIME_STEP);
@@ -16,11 +14,12 @@ for i = 1:4
   wb_motor_set_velocity(wheels(i), 0.0);
 end
 
-theta = [];
-real_speed = 0;
+setpoint = 0.5;
+speedPID = PID(0.001, 0.001,0);
+speedPID.setLimits(-0.1, 0.1);
+pitchPID = PID(30, 7, 0.5);
 
-pitch = PID(50, 10, 0);
-spPID = PID(1, 0, 0);
+
 
 msg = [];
 while wb_robot_step(TIME_STEP) ~= -1
@@ -33,27 +32,23 @@ while wb_robot_step(TIME_STEP) ~= -1
   end
   
   real_speed = msg;
+  pitch_roll_yaw = wb_inertial_unit_get_roll_pitch_yaw(sensor);
+  pitch = pitch_roll_yaw(1);
+ 
+  speedPID.update(real_speed, setpoint);
+  speedPID.compute();
   
-  theta = wb_inertial_unit_get_roll_pitch_yaw(sensor);
-  theta = theta;
+  pitchPID.update(pitch, speedPID.output);
+  pitchPID.compute();
   
+  motor_speed = -pitchPID.output; 
   
-  setpoint = 1;
-  
-  spPID.update(real_speed, setpoint);
-  spPID.compute();
-  
-  pitch.update(theta, spPID.output);
-  pitch.compute();
-  
-  speed = -pitch.output; 
-  
-  %wb_console_print(sprintf('Sensor value: %f\n', msg), WB_STDOUT);
+  wb_console_print(sprintf('Real speed: %f\n', real_speed), WB_STDOUT);
   
   
-  wb_motor_set_velocity(wheels(1), speed);
-  wb_motor_set_velocity(wheels(2), speed);
-  wb_motor_set_velocity(wheels(3), speed);
-  wb_motor_set_velocity(wheels(4), speed);
+  wb_motor_set_velocity(wheels(1), motor_speed);
+  wb_motor_set_velocity(wheels(2), motor_speed);
+  wb_motor_set_velocity(wheels(3), motor_speed);
+  wb_motor_set_velocity(wheels(4), motor_speed);
   drawnow;
 end
