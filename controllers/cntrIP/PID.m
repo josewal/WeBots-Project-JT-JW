@@ -58,6 +58,12 @@ classdef PID < handle
             this.setpoint = setpoint;
         end
         
+        function setTunings(this,tunings)
+            this.Kp = tunings(1);
+            this.Ki = tunings(2);
+            this.Kd = tunings(3);
+         end
+        
         function setLimits(this,min,max)
             this.limits = [min, max];
         end
