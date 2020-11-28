@@ -14,14 +14,14 @@ for i = 1:4
 end
 
 
-drivePID = PID(-0.2, -0, -0.0005);
-drivePID.setLimits(-3, 3);
+drivePID = PID(-0.225, -0, -0.0005);
+drivePID.setLimits(-4, 4);
 drivePID.enable();
 distance = 0;
 desired_distance = 20;
 
 speedPID = PID(0.3, 0.00005, 0.004);
-speedPID.setLimits(-0.4, 0.4);
+speedPID.setLimits(-0.45, 0.45);
 speedPID.enable();
 velocity = 0;
 desired_velocity = 0;
@@ -70,7 +70,7 @@ while wb_robot_step(TIME_STEP) ~= -1
     
     drivePID.update(distance, desired_distance);
     
-    desired_velocity = 0.9*prev_desired_velocity + 0.1*drivePID.output;
+    desired_velocity = 0.7*prev_desired_velocity + 0.3*drivePID.output;
     prev_desired_velocity = desired_velocity;
     speedPID.update(velocity, desired_velocity);
     
