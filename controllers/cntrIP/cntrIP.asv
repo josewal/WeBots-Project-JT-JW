@@ -14,22 +14,22 @@ for i = 1:4
 end
 
 
-drivePID = PID(-0.3, -0.0, -1);
-drivePID.setLimits(-4, 4);
-drivePID.enable();
+drivePID = PID(-0.225, -0, -0.00005);
+drivePID.setLimits(-2, 2);
+drivePID.disable();
 distance = 0;
-desired_distance = 100;
+desired_distance = 60;
 
 
-speedPID = PID(0.25, 0.0002, 0.3);
-speedPID.setLimits(-0.4, 0.4);
+speedPID = PID(0.25, 0.0002, -0.3);
+speedPID.setLimits(-0.2, 0.2);
 speedPID.enable();
 velocity = 0;
 desired_velocity = 0;
 prev_desired_velocity = 0;
 
 
-pitchPID = PID(115,25,10);
+pitchPID = PID(100,15,1);
 pitchPID.enable();
 desired_pitch = 0;
 prev_desired_pitch = 0;
@@ -70,10 +70,14 @@ while wb_robot_step(TIME_STEP) ~= -1
     pitch_roll_yaw = wb_inertial_unit_get_roll_pitch_yaw(sensor);
     pitch = pitch_roll_yaw(1);
     
+    
+    
     drivePID.update(distance, desired_distance);
-    desired_velocity = 0*prev_desired_velocity + 1*drivePID.output;
-    prev_desired_velocity = desired_velocity;
-
+    if ((drivePID.e < -0.00001) | (drivePID.e > 0.00001))
+        desired_velocity = 0.7*prev_desired_velocity + 0.3*drivePID.output;
+        prev_desired_velocity = desired_velocity;
+    end
+    
     speedPID.update(velocity, desired_velocity);
     desired_pitch = 0.9*prev_desired_pitch + 0.1*speedPID.output;
     prev_desired_pitch = desired_pitch;
@@ -83,12 +87,11 @@ while wb_robot_step(TIME_STEP) ~= -1
     
     desired_motor_speed = pitchPID.output;
     
-    
-    if distance > 90
-    desired_distance = 80;
+    if distance > 30 && desired_distance ~= 0;
+        desired_distance = 0;
     end
     
-    if  ((t > 0) && (t < 800)) && false
+    if  ((t > 0) && (t < 800)) && true
         fig = subplot(3,1,1);
         sample_eP = [sample_eP, pitch];
         sample_setpointP = [sample_setpointP, desired_pitch];

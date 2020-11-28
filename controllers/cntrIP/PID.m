@@ -7,8 +7,8 @@ classdef PID < handle
         input {mustBeNumeric};
         setpoint {mustBeNumeric}; 
         output {mustBeNumeric};
-        error {mustBeNumeric};
-        limits (1,2){mustBeNumeric};
+        e = zeros(1,3);
+        limits (1,2) {mustBeNumeric};
         enable_bool
         Kp {mustBeNumeric};
         Ki {mustBeNumeric};
@@ -27,13 +27,13 @@ classdef PID < handle
         end
         
         function compute(this)
-            this.p = this.error;
-            this.i = this.i + this.error;
-            this.d = [this.d(end), this.error - this.d(end)];
+            this.p = this.e(end);
+            this.i = this.i + this.e(end);
+            this.d = [this.d(end), this.e(end) - this.e(end-1)];
             
             this.output = (this.Kp * this.p)...
                         + (this.Ki * this.i)...
-                        + (this.Kd * this.d(end));
+                        - (this.Kd * this.d(end));
             
             if this.output < this.limits(1) % ???
                 this.output = this.limits(1);
@@ -45,7 +45,7 @@ classdef PID < handle
         function update(this,input,setpoint)
             this.setpoint = setpoint;
             this.input = input;
-            this.error = this.input - this.setpoint;
+            this.e = [this.e(2:end), this.input - this.setpoint];
             
             if (this.enable_bool)
               this.compute();

@@ -8,9 +8,9 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.7842891275161911 0.6202354978150029 0.014088708601821098 0.285108317997136
-  position 2.3309167198524823 1.5577352125914232 4.765968944041597
-  follow "robot"
+  orientation -0.047942894760406564 0.9905508966747012 0.12849280111717612 2.553182471214309
+  position 7.41632473298686 3.2412893425482854 -7.4959656034789255
+  follow "robot:solid(4)"
 }
 TexturedBackground {
 }
@@ -78,7 +78,7 @@ Robot {
       device [
         RotationalMotor {
           name "wheel1"
-          maxVelocity 50
+          maxVelocity 80
         }
       ]
       endPoint Solid {
@@ -119,7 +119,7 @@ Robot {
       device [
         RotationalMotor {
           name "wheel2"
-          maxVelocity 50
+          maxVelocity 80
         }
       ]
       endPoint Solid {
@@ -145,7 +145,7 @@ Robot {
       device [
         RotationalMotor {
           name "wheel3"
-          maxVelocity 50
+          maxVelocity 80
         }
       ]
       endPoint Solid {
@@ -171,7 +171,7 @@ Robot {
       device [
         RotationalMotor {
           name "wheel4"
-          maxVelocity 50
+          maxVelocity 80
         }
       ]
       endPoint Solid {
@@ -221,7 +221,7 @@ DEF valec Robot {
       appearance CorrugatedMetal {
       }
       geometry DEF CYL_GEOM Cylinder {
-        height 0.5
+        height 0.7
         radius 0.2
         subdivision 100
       }
