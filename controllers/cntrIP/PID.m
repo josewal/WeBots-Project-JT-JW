@@ -1,9 +1,9 @@
 classdef PID < handle
     
     properties (SetAccess = private)
-        p = zeros(1, 30);
-        i = zeros(1, 30);
-        d = zeros(1, 30);
+        p = 0;
+        i = 0;
+        d = [0, 0];
         input {mustBeNumeric};
         setpoint {mustBeNumeric}; 
         output {mustBeNumeric};
@@ -27,13 +27,13 @@ classdef PID < handle
         end
         
         function compute(this)
-            this.p = [this.p(2:end), this.error];
-            this.i = [this.i(2:end), this.i(end) + this.p(end)];
-            this.d = [this.d(2:end), this.error - this.p(end-1)];
+            this.p = this.error;
+            this.i = this.i + this.error;
+            this.d = [this.d(end), this.error - this.d(end)];
             
-            this.output = (this.Kp * this.p(end) / 1)...
-                        + (this.Ki * this.i(end) / 1)...
-                        + (this.Kd * this.d(end) / 1);
+            this.output = (this.Kp * this.p)...
+                        + (this.Ki * this.i)...
+                        + (this.Kd * this.d(end));
             
             if this.output < this.limits(1)
                 this.output = this.limits(1);
