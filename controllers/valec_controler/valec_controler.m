@@ -10,7 +10,7 @@
 %keyboard;
 
 
-TIME_STEP = 16;
+TIME_STEP = 32;
 
 emitter = wb_robot_get_device(convertStringsToChars("emitter"));
 wb_emitter_set_channel(emitter, 1);
@@ -23,7 +23,7 @@ while wb_robot_step(TIME_STEP) ~= -1
   
   gyro_data = wb_gyro_get_values(gyro);
   x = gyro_data(2);
-  speed = (0.6*pi)*(x/(2*pi));
+  speed = (0.4*pi)*(x/(2*pi));
   wb_emitter_send(emitter, speed);
   drawnow;
 

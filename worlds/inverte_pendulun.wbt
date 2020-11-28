@@ -8,8 +8,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.5532098533833588 -0.46430583746243625 -0.6916494396859353 5.982965412639086
-  position 0.381774434801912 1.1948338068852333 2.6318512801996286
+  orientation -0.9848699669220359 0.1570862630742944 -0.07317823589252252 0.18074138271489135
+  position -0.06702325025131295 1.5374745527454303 5.075825263089568
   follow "robot"
 }
 TexturedBackground {
@@ -17,8 +17,8 @@ TexturedBackground {
 TexturedBackgroundLight {
 }
 Robot {
-  translation 0 0.592931 0
-  rotation 0 1 0 -1.5641466299726126
+  translation -4.690752038051477e-27 0.40288556000000003 3.1192491952979307e-29
+  rotation 5.9679764857794e-27 1 5.9284226910757145e-27 -1.5641466299726126
   children [
     DEF WEIGHT Solid {
       translation 0 0.5 0
@@ -36,7 +36,7 @@ Robot {
       boundingObject USE WEIGHT_GEOM
       physics Physics {
         density -1
-        mass 30
+        mass 15
         centerOfMass [
           0 0 0
         ]
@@ -69,7 +69,11 @@ Robot {
     }
     DEF WHEEL1 HingeJoint {
       jointParameters HingeJointParameters {
-        anchor 0.06 -0.07 0.25
+        position -1.479895337719638e-30
+        anchor 0.15 -0.07 0.25
+        suspensionSpringConstant 10000
+        suspensionDampingConstant 1000
+        suspensionAxis 0 1 0
       }
       device [
         RotationalMotor {
@@ -78,8 +82,8 @@ Robot {
         }
       ]
       endPoint Solid {
-        translation 0.15 -0.07 0.25
-        rotation 1 0 0 0
+        translation 0.14999999999999997 -0.07000000000000006 0.24999999999999997
+        rotation 0.9999999729977528 1.3777356013202006e-30 -0.00023238866934102652 -1.4798953776778486e-30
         children [
           DEF WHEEL Transform {
             rotation 0 0 1 1.5708
@@ -92,7 +96,7 @@ Robot {
                 }
                 geometry Cylinder {
                   height 0.02
-                  radius 0.06
+                  radius 0.1
                   subdivision 50
                 }
               }
@@ -107,7 +111,10 @@ Robot {
     DEF WHEEL2 HingeJoint {
       jointParameters HingeJointParameters {
         position 1761.0553335611894
-        anchor -0.06 -0.07 0.25
+        anchor -0.15 -0.07 0.25
+        suspensionSpringConstant 10000
+        suspensionDampingConstant 1000
+        suspensionAxis 0 1 0
       }
       device [
         RotationalMotor {
@@ -116,8 +123,8 @@ Robot {
         }
       ]
       endPoint Solid {
-        translation -0.15 -0.07 0.25
-        rotation 0.9999999999458121 9.27174479256132e-06 -4.733966376302296e-06 2.1314524330565616
+        translation -0.14999999999999997 -0.07000000000000006 0.24999999999999997
+        rotation 0.9999999982535784 3.504087859136133e-31 -5.910027939531966e-05 -1.4799175689510219e-30
         children [
           USE WHEEL
         ]
@@ -130,7 +137,10 @@ Robot {
     DEF WHEEL3 HingeJoint {
       jointParameters HingeJointParameters {
         position 1916.0802408051923
-        anchor 0.06 -0.07 -0.25
+        anchor 0.15 -0.07 -0.25
+        suspensionSpringConstant 10000
+        suspensionDampingConstant 1000
+        suspensionAxis 0 1 0
       }
       device [
         RotationalMotor {
@@ -139,8 +149,8 @@ Robot {
         }
       ]
       endPoint Solid {
-        translation 0.15 -0.07 -0.25
-        rotation 0.9999999717792875 0.00020185068481668036 0.00012529056501845774 0.07672583813348349
+        translation 0.15 -0.07000000000000006 -0.24999999999999997
+        rotation 0.9999999319518248 2.1871058698247406e-30 -0.00036891238215029236 -1.4796133779574515e-30
         children [
           USE WHEEL
         ]
@@ -153,7 +163,10 @@ Robot {
     DEF WHEEL4 HingeJoint {
       jointParameters HingeJointParameters {
         position 1761.0554515389808
-        anchor -0.06 -0.07 -0.25
+        anchor -0.15 -0.07 -0.25
+        suspensionSpringConstant 10000
+        suspensionDampingConstant 1000
+        suspensionAxis 0 1 0
       }
       device [
         RotationalMotor {
@@ -162,8 +175,8 @@ Robot {
         }
       ]
       endPoint Solid {
-        translation -0.15 -0.07 -0.25
-        rotation 0.999999999945802 9.273550636857881e-06 -4.73257991801614e-06 2.131569046943568
+        translation -0.14999999999999994 -0.07000000000000006 -0.24999999999999997
+        rotation 0.9999999477405963 1.916658937185282e-30 -0.0003232936820922695 -1.4791409635706378e-30
         children [
           USE WHEEL
         ]
@@ -180,6 +193,8 @@ Robot {
     mass 1
   }
   controller "cntrIP"
+  linearVelocity 2.7094416232529896e-26 -0.31392000000000003 -1.8017267530885822e-28
+  angularVelocity -2.4638678375241845e-27 2.6181775209219204e-17 -3.7051822383282886e-25
 }
 DEF FLOOR Solid {
   translation 0 -0.06 0
@@ -196,8 +211,8 @@ DEF FLOOR Solid {
   boundingObject USE FLOOR_GEOM
 }
 DEF valec Robot {
-  translation 0 0.258551 0
-  rotation 1 0 0 -1.5707953071795862
+  translation 0 0.15850556000000002 0
+  rotation 0.9999999999999999 0 0 -1.5707953071795862
   children [
     Emitter {
       channel 1
@@ -209,7 +224,7 @@ DEF valec Robot {
       }
       geometry DEF CYL_GEOM Cylinder {
         height 0.5
-        radius 0.3
+        radius 0.2
         subdivision 100
       }
     }
@@ -218,7 +233,7 @@ DEF valec Robot {
   boundingObject USE CYL_GEOM
   physics Physics {
     density -1
-    mass 4
+    mass 1
     centerOfMass [
       0 0 0
     ]
@@ -228,4 +243,5 @@ DEF valec Robot {
     ]
   }
   controller "valec_controler"
+  linearVelocity 0 -0.31392000000000003 0
 }

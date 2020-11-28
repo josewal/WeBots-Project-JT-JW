@@ -1,6 +1,6 @@
 %desktop;
 
-TIME_STEP = 16;
+TIME_STEP = 32;
 
 sensor = wb_robot_get_device(convertStringsToChars("IMU"));
 wb_inertial_unit_enable(sensor, TIME_STEP);
@@ -15,23 +15,29 @@ for i = 1:4
 end
 
 
-speedPID = PID(0.05, 0.001,0);
+speedPID = PID(0.3, 0.00005, 0.004);
 speedPID.setLimits(-0.1, 0.1);
-speedPID.disable();
+speedPID.enable();
+velocity = 0;
+desired_velocity = 0;
 
 
-pitchPID = PID(400, 40, 0.4);
+pitchPID = PID(120,15,0);
+pitchPID.enable();
 desired_pitch = 0;
+prev_desired_pitch = 0;
 
-sample_error = 0;
-sample_setpoint = 0;
+sample_errorP = 0;
+sample_setpointP = 0;
+sample_errorV = 0;
+sample_setpointV = 0;
 
 msg = [];
 distance = 0;
 
 t = 0;
 
-
+fig = figure();
 while wb_robot_step(TIME_STEP) ~= -1
     t = t + 1;
     while wb_receiver_get_queue_length(receiver) > 0
@@ -41,33 +47,55 @@ while wb_robot_step(TIME_STEP) ~= -1
         wb_receiver_next_packet(receiver);
     end
     
+    if size(msg) == [1,1]
     velocity = msg;
+    end
+    
+    
+    
     pitch_roll_yaw = wb_inertial_unit_get_roll_pitch_yaw(sensor);
     pitch = pitch_roll_yaw(1);
     
-    %speedPID.update(velocity, 0);
-    %desired_pitch = speedPID.output;
-    
-    if t > 50
-    desired_pitch = 0.05;
+    if t == 50 
+    desired_velocity = 1;
+    elseif t == 200
+    desired_velocity = 0.0;
+    elseif t == 400
+    desired_velocity = -0.5;
     end
     
+    speedPID.update(velocity, desired_velocity);
+    
+    
+    desired_pitch = 0.9*prev_desired_pitch + 0.1*speedPID.output;
+    prev_desired_pitch = desired_pitch;
+ 
     pitchPID.update(pitch, desired_pitch);
     desired_motor_speed = pitchPID.output;
-    
  
-    if t < 200
-    sample_error = [sample_error, pitch];
-    sample_setpoint = [sample_setpoint, desired_pitch];
+    if (t < 500)
+    fig = subplot(2,1,1);
+    sample_errorP = [sample_errorP, pitch];
+    sample_setpointP = [sample_setpointP, desired_pitch];
     
-    plot(sample_setpoint, "g-")
+    plot(sample_setpointP, "g-")
     hold on
-    plot(sample_error, "b-");
+    plot(sample_errorP, "b-");
     grid on
-    axis([40 inf -0.025 inf]);
+    axis([0 inf -inf inf]);
     hold off
-   
-    end
+    
+     sample_errorV = [sample_errorV, velocity];
+    sample_setpointV = [sample_setpointV, desired_velocity];
+    
+    fig = subplot(2,1,2);
+    plot(sample_setpointV, "g-")
+    hold on
+    plot(sample_errorV, "b-");
+    grid on
+    axis([0 inf -inf inf]);
+    hold off
+   end
     
     
     for i = 1:length(motors)

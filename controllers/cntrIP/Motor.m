@@ -2,8 +2,8 @@ classdef Motor < handle
     properties (SetAccess = private)
         tag (1,1) 
         wb_motor
-        speed (1,1) {mustBeNumeric}
-        steps (1,1) {mustBeNumeric}
+        speed {mustBeNumeric}
+        steps {mustBeNumeric}
         enable_bool
     end
     
