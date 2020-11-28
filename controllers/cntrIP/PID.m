@@ -6,7 +6,7 @@ classdef PID < handle
         d = zeros(1, 50);
         output {mustBeNumeric};
         error {mustBeNumeric};
-        limits (1,2){mustBeNumeric};
+        limits (1,2) {mustBeNumeric};
         enable_bool 
     end
     
@@ -39,10 +39,10 @@ classdef PID < handle
                         + (this.Ki * this.i(end) / 1)...
                         + (this.Kd * this.d(end) / 1);
             
-            if this.output < this.limits(1)
+            if this.output < this.limits(1) % ???
                 this.output = this.limits(1);
-            elseif this.output > this.limits(2)
-                this.output = this.limits(2);
+            elseif this.output > this.limits(2) % ??
+                this.output = this.limits(2); 
             end
         end
         
@@ -58,11 +58,11 @@ classdef PID < handle
         end
         
         function setLimits(this,min,max)
-            this.limits = [min, max];
+            this.limits = [min, max]; %??
         end
         
-        function enable(this)
-        this.enable_bool = true;
+        function enable(this) 
+        this.enable_bool = true; 
         end
         
         function disable(this)
