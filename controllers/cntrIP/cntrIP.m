@@ -1,6 +1,6 @@
-%desktop;
+desktop;
 
-TIME_STEP = 32;
+TIME_STEP = 16;
 
 sensor = wb_robot_get_device(convertStringsToChars("IMU"));
 wb_inertial_unit_enable(sensor, TIME_STEP);
@@ -14,14 +14,15 @@ for i = 1:4
     motors(i) = Motor(motor_tags(i));
 end
 
-setpoint = 0.5;
-speedPID = PID(0.01, 0.001,0);
+speedPID = PID(0.05, 0.001,0);
 speedPID.setLimits(-0.1, 0.1);
 speedPID.enable();
 
 pitchPID = PID(100, 7, 0.5);
 
 msg = [];
+tic
+distance = 0;
 while wb_robot_step(TIME_STEP) ~= -1
     
     while wb_receiver_get_queue_length(receiver) > 0
@@ -35,7 +36,12 @@ while wb_robot_step(TIME_STEP) ~= -1
     pitch_roll_yaw = wb_inertial_unit_get_roll_pitch_yaw(sensor);
     pitch = pitch_roll_yaw(1);
     
-    speedPID.update(velocity, setpoint);
+    distance = distance * velocity;
+    
+    drivePID.update(distance, desired_distance);
+    desired_velocity = drivePID.output;
+    
+    speedPID.update(velocity, desired_velocity);
     desired_pitch = speedPID.output;
     
     pitchPID.update(pitch, desired_pitch);
