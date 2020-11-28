@@ -47,7 +47,7 @@ classdef PID < handle
             this.input = input;
             this.error = this.input - this.setpoint;
             
-            if this.enable_bool
+            if (this.enable_bool)
               this.compute();
             else
               this.output = 0;
