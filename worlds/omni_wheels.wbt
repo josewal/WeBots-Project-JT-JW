@@ -8,8 +8,8 @@ WorldInfo {
   coordinateSystem "NUE"
 }
 Viewpoint {
-  orientation 0.3256897469867377 -0.8715784909382334 -0.36643842980990254 4.6469608910595195
-  position 1.3915754230421398 1.397998969432619 0.16306072174674385
+  orientation 0.26113897667505837 -0.9289550657717284 -0.2623907784929705 4.914884262943872
+  position 1.0871991614287786 0.7159524005263214 0.26663447567163895
 }
 TexturedBackground {
 }
@@ -19,18 +19,22 @@ RectangleArena {
   floorSize 5 5
 }
 DEF OMNI_WHEELS Robot {
-  translation 0 0.37 0
+  translation 0 0.43 0
   children [
     InertialUnit {
       name "IMU"
     }
     DEF SOLID1 Solid {
-      translation 0 -0.06 0
+      translation 0 -0.085 0.0433014
+      rotation -1 0 0 -0.523595307179586
       children [
         DEF WHEEL1 HingeJoint {
           jointParameters HingeJointParameters {
             axis 0 0 1
             anchor 0 0 0.1
+            suspensionSpringConstant 10000
+            suspensionDampingConstant 10000
+            suspensionAxis 0 1 0
           }
           device [
             RotationalMotor {
@@ -281,20 +285,28 @@ DEF OMNI_WHEELS Robot {
         }
       ]
       name "wheel 1"
-      boundingObject DEF DUMMY Sphere {
-        radius 0.001
+      boundingObject DEF DUMMY_Box Transform {
+        translation 0 0.21 0
+        children [
+          Box {
+            size 0.1 0.1 0.1
+          }
+        ]
       }
       physics Physics {
       }
     }
     DEF SOLID2 Solid {
-      translation 0 -0.06 0
-      rotation 0 1 0 2.09
+      translation 0.037595 -0.085 -0.0214855
+      rotation 0.14852297507769832 0.9552128397143437 -0.25594795705168044 2.12932
       children [
         DEF WHEEL2 HingeJoint {
           jointParameters HingeJointParameters {
             axis 0 0 1
             anchor 0 0 0.1
+            suspensionSpringConstant 10000
+            suspensionDampingConstant 10000
+            suspensionAxis 0 1 0
           }
           device [
             RotationalMotor {
@@ -480,18 +492,28 @@ DEF OMNI_WHEELS Robot {
         }
       ]
       name "wheel 2"
-      boundingObject USE DUMMY
+      boundingObject DEF DUMMY_Box Transform {
+        translation 0 0.21 0
+        children [
+          Box {
+            size 0.1 0.1 0.1
+          }
+        ]
+      }
       physics Physics {
       }
     }
     DEF SOLID3 Solid {
-      translation 0 -0.06 0
-      rotation 0 1 0 4.18
+      translation -0.037308 -0.085 -0.0219796
+      rotation -0.1463240526835457 0.9555293440355357 -0.25603309218396336 -2.1419253071795863
       children [
         DEF WHEEL3 HingeJoint {
           jointParameters HingeJointParameters {
             axis 0 0 1
             anchor 0 0 0.1
+            suspensionSpringConstant 10000
+            suspensionDampingConstant 10000
+            suspensionAxis 0 1 0
           }
           device [
             RotationalMotor {
@@ -499,8 +521,8 @@ DEF OMNI_WHEELS Robot {
             }
           ]
           endPoint Solid {
-            translation 0 0 0.1
-            rotation 0 0 1 0.0039094399999072375
+            translation 7.201364435459662e-05 -8.8600004888147e-05 0.0899836
+            rotation 0.001044279280315482 0.0038258767912755097 0.9999921360428605 0.02466197345844557
             children [
               DEF sr1 HingeJoint {
                 jointParameters HingeJointParameters {
@@ -677,7 +699,14 @@ DEF OMNI_WHEELS Robot {
         }
       ]
       name "wheel 3"
-      boundingObject USE DUMMY
+      boundingObject DEF DUMMY_Box Transform {
+        translation 0 0.21 0
+        children [
+          Box {
+            size 0.1 0.1 0.1
+          }
+        ]
+      }
       physics Physics {
       }
     }
@@ -702,7 +731,7 @@ DEF OMNI_WHEELS Robot {
   boundingObject USE BODY_TRANS
   physics Physics {
     density -1
-    mass 5
+    mass 10
     centerOfMass [
       0 0.5 0
     ]
@@ -720,7 +749,7 @@ DEF Ball Solid {
       appearance LedStrip {
       }
       geometry DEF Sphere_GEOM Sphere {
-        radius 0.15
+        radius 0.14
         subdivision 4
       }
     }
