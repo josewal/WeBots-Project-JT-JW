@@ -13,39 +13,33 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.349442209799872 0.8801410410670992 0.3213127601566815 1.3924037365276312
-  position 0.6637991084301103 0.8743544724973492 0.277945200247125
-  follow "robot"
+  orientation 0.103414926931809 -0.9905770627822108 -0.089791066245236 4.843805287035292
+  position 1.9380070856413087 0.6457050405797868 0.03172675624015786
 }
 TexturedBackground {
 }
 TexturedBackgroundLight {
 }
+RectangleArena {
+  floorSize 5 5
+}
 DEF OMNI_WHEELS Robot {
-  translation 0 0.41 0
-  rotation 0 1 0 -5.307179586466759e-06
+  translation 0 0.2 0
   children [
     InertialUnit {
       name "IMU"
     }
-    DEF SOLID1 Solid {
-      translation 0 -0.1 0.0692818
-      rotation -1 0 0 -0.523595307179586
-      scale 0.5 0.5 0.5
+    DEF wheel1 Solid {
+      translation 0 -0.11 0
       children [
         DEF WHEEL1 HingeJoint {
           jointParameters HingeJointParameters {
             axis 0 0 1
             anchor 0 0 0.1
-            suspensionSpringConstant 50000
-            suspensionDampingConstant 10000
-            suspensionAxis 0 1 0
           }
           device [
             RotationalMotor {
               name "wheel1"
-              maxVelocity 50
-              maxTorque 20
             }
           ]
           endPoint Solid {
@@ -69,8 +63,8 @@ DEF OMNI_WHEELS Robot {
                             roughness 1
                             metalness 0
                           }
-                          geometry Cylinder {
-                            height 0.02
+                          geometry Capsule {
+                            height 0.015
                             radius 0.01
                           }
                         }
@@ -292,40 +286,33 @@ DEF OMNI_WHEELS Robot {
         }
       ]
       name "wheel 1"
-      boundingObject DEF DUMMY_Box Transform {
-        translation 0 0.21 0
+      boundingObject DEF dummy_object Transform {
+        translation 0 -4.40784e-07 0.12
+        rotation 1 0 0 1.5708
         children [
-          Box {
-            size 0.1 0.1 0.1
-          }
+          USE wheel1
         ]
       }
       physics Physics {
       }
     }
-    DEF SOLID2 Solid {
-      translation 0.060152 -0.1 -0.0343768
-      rotation 0.14852297507769832 0.9552128397143437 -0.25594795705168044 2.12932
-      scale 0.5 0.5 0.5
+    DEF wheel2 Solid {
+      translation 0 -0.11 0
+      rotation 0 1 0 2.0944
       children [
-        DEF WHEEL2 HingeJoint {
+        DEF WHEEL1 HingeJoint {
           jointParameters HingeJointParameters {
             axis 0 0 1
             anchor 0 0 0.1
-            suspensionSpringConstant 50000
-            suspensionDampingConstant 10000
-            suspensionAxis 0 1 0
           }
           device [
             RotationalMotor {
               name "wheel2"
-              maxVelocity 50
-              maxTorque 20
             }
           ]
           endPoint Solid {
             translation 0 0 0.1
-            rotation 0 0 1 0.0024058099997747596
+            rotation 0 0 1 0
             children [
               DEF sr1 HingeJoint {
                 jointParameters HingeJointParameters {
@@ -335,7 +322,22 @@ DEF OMNI_WHEELS Robot {
                   translation 0 0.05 0.02
                   rotation 1 0 0 0
                   children [
-                    USE r1
+                    DEF r1 Transform {
+                      rotation 0 0 1 1.5708
+                      children [
+                        DEF SMALL_WHEEL_SHAPE Shape {
+                          appearance PBRAppearance {
+                            baseColor 1 0.752941 0.796078
+                            roughness 1
+                            metalness 0
+                          }
+                          geometry Capsule {
+                            height 0.015
+                            radius 0.01
+                          }
+                        }
+                      ]
+                    }
                   ]
                   name "sr1"
                   boundingObject USE r1
@@ -354,7 +356,12 @@ DEF OMNI_WHEELS Robot {
                   translation -0.03535 0.03535 0.02
                   rotation 0.7071067811865476 0.7071067811865476 0 0
                   children [
-                    USE r2
+                    DEF r2 Transform {
+                      rotation 0 0 1 2.27
+                      children [
+                        USE SMALL_WHEEL_SHAPE
+                      ]
+                    }
                   ]
                   name "sr2"
                   boundingObject USE r2
@@ -372,7 +379,12 @@ DEF OMNI_WHEELS Robot {
                   translation 0 -0.05 0.02
                   rotation 1 0 0 0
                   children [
-                    USE r3
+                    DEF r3 Transform {
+                      rotation 0 0 1 1.5708
+                      children [
+                        USE SMALL_WHEEL_SHAPE
+                      ]
+                    }
                   ]
                   name "sr3"
                   boundingObject USE r3
@@ -391,7 +403,12 @@ DEF OMNI_WHEELS Robot {
                   translation 0.03535 -0.03535 0.02
                   rotation 0.7071067811865476 0.7071067811865476 0 0
                   children [
-                    USE r4
+                    DEF r4 Transform {
+                      rotation 0 0 1 2.27
+                      children [
+                        USE SMALL_WHEEL_SHAPE
+                      ]
+                    }
                   ]
                   name "sr4"
                   boundingObject USE r4
@@ -409,7 +426,11 @@ DEF OMNI_WHEELS Robot {
                 endPoint Solid {
                   translation -0.05 0 0.02
                   children [
-                    USE r5
+                    DEF r5 Transform {
+                      children [
+                        USE SMALL_WHEEL_SHAPE
+                      ]
+                    }
                   ]
                   name "sr5"
                   boundingObject USE r5
@@ -427,7 +448,11 @@ DEF OMNI_WHEELS Robot {
                 endPoint Solid {
                   translation 0.05 0 0.02
                   children [
-                    USE r6
+                    DEF r6 Transform {
+                      children [
+                        USE SMALL_WHEEL_SHAPE
+                      ]
+                    }
                   ]
                   name "sr6"
                   boundingObject USE r6
@@ -446,7 +471,12 @@ DEF OMNI_WHEELS Robot {
                   translation -0.03535 -0.03535 0.02
                   rotation -0.7071067811865476 0.7071067811865476 0 0
                   children [
-                    USE r7
+                    DEF r7 Transform {
+                      rotation 0 0 1 0.76
+                      children [
+                        USE SMALL_WHEEL_SHAPE
+                      ]
+                    }
                   ]
                   name "sr7"
                   boundingObject USE r7
@@ -465,7 +495,12 @@ DEF OMNI_WHEELS Robot {
                   translation 0.03535 0.03535 0.02
                   rotation -0.7071067811865476 0.7071067811865476 0 0
                   children [
-                    USE r8
+                    DEF r8 Transform {
+                      rotation 0 0 1 0.76
+                      children [
+                        USE SMALL_WHEEL_SHAPE
+                      ]
+                    }
                   ]
                   name "sr8"
                   boundingObject USE r8
@@ -475,7 +510,24 @@ DEF OMNI_WHEELS Robot {
                   }
                 }
               }
-              USE WHEEL_TRANS
+              DEF WHEEL_TRANS Transform {
+                translation 0 0 0.02
+                rotation 1 0 0 1.5708
+                children [
+                  DEF WHEEL_SHAPE Shape {
+                    appearance PBRAppearance {
+                      baseColor 0.678431 0.847059 0.901961
+                      roughness 1
+                      metalness 0
+                    }
+                    geometry Cylinder {
+                      height 0.02
+                      radius 0.05
+                      subdivision 20
+                    }
+                  }
+                ]
+              }
             ]
             boundingObject Transform {
               translation 0 0 0.02
@@ -501,41 +553,28 @@ DEF OMNI_WHEELS Robot {
           }
         }
       ]
-      name "wheel 2"
-      boundingObject DEF DUMMY_Box Transform {
-        translation 0 0.21 0
-        children [
-          Box {
-            size 0.1 0.1 0.1
-          }
-        ]
-      }
+      name "wheel 1(1)"
+      boundingObject USE dummy_object
       physics Physics {
       }
     }
-    DEF SOLID3 Solid {
-      translation -0.0596928 -0.1 -0.0351673
-      rotation -0.1463240526835457 0.9555293440355357 -0.25603309218396336 -2.1419253071795863
-      scale 0.5 0.5 0.5
+    DEF wheel3 Solid {
+      translation 0 -0.11 0
+      rotation 0 1 0 -2.094395307179586
       children [
-        DEF WHEEL3 HingeJoint {
+        DEF WHEEL1 HingeJoint {
           jointParameters HingeJointParameters {
             axis 0 0 1
             anchor 0 0 0.1
-            suspensionSpringConstant 50000
-            suspensionDampingConstant 10000
-            suspensionAxis 0 1 0
           }
           device [
             RotationalMotor {
               name "wheel3"
-              maxVelocity 50
-              maxTorque 20
             }
           ]
           endPoint Solid {
-            translation 7.201364435459662e-05 -8.8600004888147e-05 0.0899836
-            rotation 0.001044279280315482 0.0038258767912755097 0.9999921360428605 0.02466197345844557
+            translation 0 0 0.1
+            rotation 0 0 1 0
             children [
               DEF sr1 HingeJoint {
                 jointParameters HingeJointParameters {
@@ -545,7 +584,22 @@ DEF OMNI_WHEELS Robot {
                   translation 0 0.05 0.02
                   rotation 1 0 0 0
                   children [
-                    USE r1
+                    DEF r1 Transform {
+                      rotation 0 0 1 1.5708
+                      children [
+                        DEF SMALL_WHEEL_SHAPE Shape {
+                          appearance PBRAppearance {
+                            baseColor 1 0.752941 0.796078
+                            roughness 1
+                            metalness 0
+                          }
+                          geometry Capsule {
+                            height 0.015
+                            radius 0.01
+                          }
+                        }
+                      ]
+                    }
                   ]
                   name "sr1"
                   boundingObject USE r1
@@ -564,7 +618,12 @@ DEF OMNI_WHEELS Robot {
                   translation -0.03535 0.03535 0.02
                   rotation 0.7071067811865476 0.7071067811865476 0 0
                   children [
-                    USE r2
+                    DEF r2 Transform {
+                      rotation 0 0 1 2.27
+                      children [
+                        USE SMALL_WHEEL_SHAPE
+                      ]
+                    }
                   ]
                   name "sr2"
                   boundingObject USE r2
@@ -582,7 +641,12 @@ DEF OMNI_WHEELS Robot {
                   translation 0 -0.05 0.02
                   rotation 1 0 0 0
                   children [
-                    USE r3
+                    DEF r3 Transform {
+                      rotation 0 0 1 1.5708
+                      children [
+                        USE SMALL_WHEEL_SHAPE
+                      ]
+                    }
                   ]
                   name "sr3"
                   boundingObject USE r3
@@ -601,7 +665,12 @@ DEF OMNI_WHEELS Robot {
                   translation 0.03535 -0.03535 0.02
                   rotation 0.7071067811865476 0.7071067811865476 0 0
                   children [
-                    USE r4
+                    DEF r4 Transform {
+                      rotation 0 0 1 2.27
+                      children [
+                        USE SMALL_WHEEL_SHAPE
+                      ]
+                    }
                   ]
                   name "sr4"
                   boundingObject USE r4
@@ -619,7 +688,11 @@ DEF OMNI_WHEELS Robot {
                 endPoint Solid {
                   translation -0.05 0 0.02
                   children [
-                    USE r5
+                    DEF r5 Transform {
+                      children [
+                        USE SMALL_WHEEL_SHAPE
+                      ]
+                    }
                   ]
                   name "sr5"
                   boundingObject USE r5
@@ -637,7 +710,11 @@ DEF OMNI_WHEELS Robot {
                 endPoint Solid {
                   translation 0.05 0 0.02
                   children [
-                    USE r6
+                    DEF r6 Transform {
+                      children [
+                        USE SMALL_WHEEL_SHAPE
+                      ]
+                    }
                   ]
                   name "sr6"
                   boundingObject USE r6
@@ -656,7 +733,12 @@ DEF OMNI_WHEELS Robot {
                   translation -0.03535 -0.03535 0.02
                   rotation -0.7071067811865476 0.7071067811865476 0 0
                   children [
-                    USE r7
+                    DEF r7 Transform {
+                      rotation 0 0 1 0.76
+                      children [
+                        USE SMALL_WHEEL_SHAPE
+                      ]
+                    }
                   ]
                   name "sr7"
                   boundingObject USE r7
@@ -675,7 +757,12 @@ DEF OMNI_WHEELS Robot {
                   translation 0.03535 0.03535 0.02
                   rotation -0.7071067811865476 0.7071067811865476 0 0
                   children [
-                    USE r8
+                    DEF r8 Transform {
+                      rotation 0 0 1 0.76
+                      children [
+                        USE SMALL_WHEEL_SHAPE
+                      ]
+                    }
                   ]
                   name "sr8"
                   boundingObject USE r8
@@ -685,7 +772,24 @@ DEF OMNI_WHEELS Robot {
                   }
                 }
               }
-              USE WHEEL_TRANS
+              DEF WHEEL_TRANS Transform {
+                translation 0 0 0.02
+                rotation 1 0 0 1.5708
+                children [
+                  DEF WHEEL_SHAPE Shape {
+                    appearance PBRAppearance {
+                      baseColor 0.678431 0.847059 0.901961
+                      roughness 1
+                      metalness 0
+                    }
+                    geometry Cylinder {
+                      height 0.02
+                      radius 0.05
+                      subdivision 20
+                    }
+                  }
+                ]
+              }
             ]
             boundingObject Transform {
               translation 0 0 0.02
@@ -711,15 +815,8 @@ DEF OMNI_WHEELS Robot {
           }
         }
       ]
-      name "wheel 3"
-      boundingObject DEF DUMMY_Box Transform {
-        translation 0 0.21 0
-        children [
-          Box {
-            size 0.1 0.1 0.1
-          }
-        ]
-      }
+      name "wheel 1(2)"
+      boundingObject USE dummy_object
       physics Physics {
       }
     }
@@ -743,43 +840,6 @@ DEF OMNI_WHEELS Robot {
   ]
   boundingObject USE BODY_TRANS
   physics Physics {
-    density -1
-    mass 10
-    centerOfMass [
-      0 0.5 0
-    ]
-    inertiaMatrix [
-      0.024857851871529238 0.023561944901923454 0.024857851871529238
-      0 0 0
-    ]
   }
   controller "cntrIP"
-}
-DEF Ball Solid {
-  translation 0 0.15 0
-  children [
-    Shape {
-      appearance LedStrip {
-      }
-      geometry DEF Sphere_GEOM Sphere {
-        radius 0.14
-        subdivision 4
-      }
-    }
-  ]
-  boundingObject USE Sphere_GEOM
-  physics Physics {
-    density -1
-    mass 1
-    centerOfMass [
-      0 0 0
-    ]
-    inertiaMatrix [
-      0.1272345024703866 0.1272345024703866 0.1272345024703866
-      0 0 0
-    ]
-  }
-}
-Floor {
-  size 100 100
 }

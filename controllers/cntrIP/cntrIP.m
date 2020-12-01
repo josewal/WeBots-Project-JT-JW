@@ -10,12 +10,12 @@ for i = 1:3
 end
 
 
-pitchXPID = PID(100,10, 0);
+pitchXPID = PID(15, 10, 0);
 pitchXPID.enable();
 desired_pitchX = 0;
 prev_desired_pitchX = 0;
 
-pitchYPID = PID(100,10,0);
+pitchYPID = PID(15, 10, 0);
 pitchYPID.enable();
 desired_pitchY = 0;
 prev_desired_pitchY = 0;
@@ -37,7 +37,7 @@ while wb_robot_step(TIME_STEP) ~= -1
     
     pitch_roll_yaw = wb_inertial_unit_get_roll_pitch_yaw(IMU)
     
-    pitchXPID.update(pitch_roll_yaw(1),0.0005);
+    pitchXPID.update(pitch_roll_yaw(1),0);
     desired_xspeed = pitchXPID.output
     
     pitchYPID.update(pitch_roll_yaw(2),0)
