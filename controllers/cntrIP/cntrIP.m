@@ -10,12 +10,12 @@ for i = 1:3
 end
 
 
-pitchXPID = PID(50,10,5);
+pitchXPID = PID(100,10, 0);
 pitchXPID.enable();
 desired_pitchX = 0;
 prev_desired_pitchX = 0;
 
-pitchYPID = PID(50,10,5);
+pitchYPID = PID(100,10,0);
 pitchYPID.enable();
 desired_pitchY = 0;
 prev_desired_pitchY = 0;
@@ -24,6 +24,7 @@ sample_setpointX = 0;
 sample_positionX = 0;
 sample_setpointY = 0;
 sample_positionY = 0;
+t = 0;
 
 velocity = 1;
 speed = [0,0,0];
@@ -36,7 +37,7 @@ while wb_robot_step(TIME_STEP) ~= -1
     
     pitch_roll_yaw = wb_inertial_unit_get_roll_pitch_yaw(IMU)
     
-    pitchXPID.update(pitch_roll_yaw(1),0.0005)
+    pitchXPID.update(pitch_roll_yaw(1),0.0005);
     desired_xspeed = pitchXPID.output
     
     pitchYPID.update(pitch_roll_yaw(2),0)
@@ -60,28 +61,18 @@ while wb_robot_step(TIME_STEP) ~= -1
     end
     
     
-    fig = subplot(2,1,1);
-    sample_setpointX = [sample_setpointX, pitchXPID.setpoint];
-    sample_positionX = [sample_positionX, pitchXPID.input];
+    sample_setpointX = [sample_setpointX(end), pitchXPID.setpoint];
+    sample_positionX = [sample_positionX(end), pitchXPID.input];
+
+    sample_setpointY = [sample_setpointY(end), pitchYPID.setpoint];
+    sample_positionY = [sample_positionY(end), pitchYPID.input];
     
-    plot3(sample_setpointX, "g-")
+    t = [t(end), t(end) + 1];
+    
     hold on
-    plot3(sample_positionX, "b-");
+    plot3(sample_setpointX, t, sample_setpointY, "g-")
+    plot3(sample_positionX, t, sample_positionY,  "b-");
     grid on
-    axis([0 inf -0.1 0.1]);
-    hold off
-    
-    sample_setpointY = [sample_setpointY, pitchYPID.setpoint];
-    sample_positionY = [sample_positionY, pitchYPID.input];
-    
-    
-    fig = subplot(2,1,2);
-    plot3(sample_setpointY, "g-")
-    hold on
-    plot3(sample_positionY, "b-");
-    grid on
-    axis([0 inf -0.1 0.1]);
-    hold off
     
 
 drawnow;

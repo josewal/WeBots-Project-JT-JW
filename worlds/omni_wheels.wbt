@@ -6,39 +6,46 @@ WorldInfo {
   title "Omni-wheels"
   basicTimeStep 8
   coordinateSystem "NUE"
+  contactProperties [
+    ContactProperties {
+      softCFM 0.0001
+    }
+  ]
 }
 Viewpoint {
-  orientation 0.26113897667505837 -0.9289550657717284 -0.2623907784929705 4.914884262943872
-  position 1.0871991614287786 0.7159524005263214 0.26663447567163895
+  orientation -0.349442209799872 0.8801410410670992 0.3213127601566815 1.3924037365276312
+  position 0.6637991084301103 0.8743544724973492 0.277945200247125
+  follow "robot"
 }
 TexturedBackground {
 }
 TexturedBackgroundLight {
 }
-RectangleArena {
-  floorSize 5 5
-}
 DEF OMNI_WHEELS Robot {
-  translation 0 0.43 0
+  translation 0 0.41 0
+  rotation 0 1 0 -5.307179586466759e-06
   children [
     InertialUnit {
       name "IMU"
     }
     DEF SOLID1 Solid {
-      translation 0 -0.085 0.0433014
+      translation 0 -0.1 0.0692818
       rotation -1 0 0 -0.523595307179586
+      scale 0.5 0.5 0.5
       children [
         DEF WHEEL1 HingeJoint {
           jointParameters HingeJointParameters {
             axis 0 0 1
             anchor 0 0 0.1
-            suspensionSpringConstant 10000
+            suspensionSpringConstant 50000
             suspensionDampingConstant 10000
             suspensionAxis 0 1 0
           }
           device [
             RotationalMotor {
               name "wheel1"
+              maxVelocity 50
+              maxTorque 20
             }
           ]
           endPoint Solid {
@@ -297,20 +304,23 @@ DEF OMNI_WHEELS Robot {
       }
     }
     DEF SOLID2 Solid {
-      translation 0.037595 -0.085 -0.0214855
+      translation 0.060152 -0.1 -0.0343768
       rotation 0.14852297507769832 0.9552128397143437 -0.25594795705168044 2.12932
+      scale 0.5 0.5 0.5
       children [
         DEF WHEEL2 HingeJoint {
           jointParameters HingeJointParameters {
             axis 0 0 1
             anchor 0 0 0.1
-            suspensionSpringConstant 10000
+            suspensionSpringConstant 50000
             suspensionDampingConstant 10000
             suspensionAxis 0 1 0
           }
           device [
             RotationalMotor {
               name "wheel2"
+              maxVelocity 50
+              maxTorque 20
             }
           ]
           endPoint Solid {
@@ -504,20 +514,23 @@ DEF OMNI_WHEELS Robot {
       }
     }
     DEF SOLID3 Solid {
-      translation -0.037308 -0.085 -0.0219796
+      translation -0.0596928 -0.1 -0.0351673
       rotation -0.1463240526835457 0.9555293440355357 -0.25603309218396336 -2.1419253071795863
+      scale 0.5 0.5 0.5
       children [
         DEF WHEEL3 HingeJoint {
           jointParameters HingeJointParameters {
             axis 0 0 1
             anchor 0 0 0.1
-            suspensionSpringConstant 10000
+            suspensionSpringConstant 50000
             suspensionDampingConstant 10000
             suspensionAxis 0 1 0
           }
           device [
             RotationalMotor {
               name "wheel3"
+              maxVelocity 50
+              maxTorque 20
             }
           ]
           endPoint Solid {
@@ -766,4 +779,7 @@ DEF Ball Solid {
       0 0 0
     ]
   }
+}
+Floor {
+  size 100 100
 }
