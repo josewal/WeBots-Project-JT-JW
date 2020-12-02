@@ -10,15 +10,17 @@ for i = 1:3
 end
 
 
-pitchXPID = PID(15, 10, 0);
+pitchXPID = PID(100, 0, 1);
 pitchXPID.enable();
 desired_pitchX = 0;
 prev_desired_pitchX = 0;
+desired_xspeed = 0;
 
-pitchYPID = PID(15, 10, 0);
+pitchYPID = PID(100, 0, 1);
 pitchYPID.enable();
 desired_pitchY = 0;
 prev_desired_pitchY = 0;
+desired_yspeed = 0;
 
 sample_setpointX = 0;
 sample_positionX = 0;
@@ -35,27 +37,38 @@ fig = figure();
 while wb_robot_step(TIME_STEP) ~= -1
     
     
-    pitch_roll_yaw = wb_inertial_unit_get_roll_pitch_yaw(IMU)
+    pitch_roll_yaw = wb_inertial_unit_get_roll_pitch_yaw(IMU);
     
-    pitchXPID.update(pitch_roll_yaw(1),0);
-    desired_xspeed = pitchXPID.output
-    
-    pitchYPID.update(pitch_roll_yaw(2),0)
-    desired_yspeed = pitchYPID.output
-    
-    velocity = norm([desired_xspeed,desired_yspeed])
-    
-    if desired_xspeed > 0;
-        heading = asin(desired_yspeed/velocity)+pi;
-    else
-        heading = asin(desired_yspeed/velocity);
+    pitchXPID.update(pitch_roll_yaw(1),0.0001);
+    if abs(pitchXPID.e) > 0.001
+      desired_xspeed = pitchXPID.output;
     end
     
+    pitchYPID.update(pitch_roll_yaw(2),0)
+    
+    if abs(pitchYPID.e) > 0.001
+      desired_yspeed = pitchYPID.output;
+    end
+    
+    velocity = norm([desired_xspeed,desired_yspeed]);
+    
+    
+    if velocity ~= 0
+      if desired_xspeed > 0;
+          heading = asin(desired_yspeed/velocity)+pi;
+      else
+          heading = asin(desired_yspeed/velocity);
+      end
+     else
+       heading = 0;
+     end
+      
     
     speed(1) = velocity * sin(0 - heading);
     speed(2) = velocity * sin(((2*pi)/3) - heading);
     speed(3) = velocity * sin(((4*pi)/3) - heading);
     
+
     for i = 1:length(motors)
         motors(i).run(speed(i));
     end
