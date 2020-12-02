@@ -8,38 +8,48 @@ WorldInfo {
   coordinateSystem "NUE"
   contactProperties [
     ContactProperties {
+      coulombFriction [
+        1, 1
+      ]
+      frictionRotation 1 1
       softCFM 0.0001
     }
   ]
 }
 Viewpoint {
-  orientation -0.06340456899272158 -0.9913503060963955 -0.11491053578079859 2.1405175768486284
-  position -0.4595153214052502 0.23120861367642737 -0.31030392516622324
+  orientation 1 0 0 4.71238898038469
+  position -0.0001462874944322048 5.18432519301435 5.1775045539408946e-05
+  follow "robot"
 }
 TexturedBackground {
 }
 TexturedBackgroundLight {
 }
 RectangleArena {
-  floorSize 5 5
+  floorSize 50 50
 }
 DEF OMNI_WHEELS Robot {
-  translation 0 0.2 0
+  translation 0 0.54 0
   children [
     InertialUnit {
       name "IMU"
     }
     DEF wheel1 Solid {
-      translation 0 -0.11 0
+      translation 0 -0.134142 0.0314627
+      rotation 1 0 0 0.785398
       children [
         DEF WHEEL1 HingeJoint {
           jointParameters HingeJointParameters {
             axis 0 0 1
             anchor 0 0 0.1
+            suspensionSpringConstant 50000
+            suspensionDampingConstant 10000
+            suspensionAxis 0 1 0
           }
           device [
             RotationalMotor {
               name "wheel1"
+              maxVelocity 50
             }
           ]
           endPoint Solid {
@@ -661,17 +671,21 @@ DEF OMNI_WHEELS Robot {
       }
     }
     DEF wheel2 Solid {
-      translation 0 -0.11 0
-      rotation 0 1 0 2.0944
+      translation 0.0272473 -0.134142 -0.0157316
+      rotation 0.2157380479632118 0.9021232005614055 -0.3736720830753473 2.18124
       children [
         DEF WHEEL1 HingeJoint {
           jointParameters HingeJointParameters {
             axis 0 0 1
             anchor 0 0 0.1
+            suspensionSpringConstant 50000
+            suspensionDampingConstant 10000
+            suspensionAxis 0 1 0
           }
           device [
             RotationalMotor {
               name "wheel2"
+              maxVelocity 50
             }
           ]
           endPoint Solid {
@@ -1287,17 +1301,21 @@ DEF OMNI_WHEELS Robot {
       }
     }
     DEF wheel3 Solid {
-      translation 0 -0.11 0
-      rotation 0 1 0 -2.094395307179586
+      translation -0.0272474 -0.134142 -0.0157312
+      rotation 0.2157390014202098 -0.9021230059386757 0.37367200245988275 2.18123
       children [
         DEF WHEEL1 HingeJoint {
           jointParameters HingeJointParameters {
             axis 0 0 1
             anchor 0 0 0.1
+            suspensionSpringConstant 50000
+            suspensionDampingConstant 10000
+            suspensionAxis 0 1 0
           }
           device [
             RotationalMotor {
               name "wheel3"
+              maxVelocity 50
             }
           ]
           endPoint Solid {
@@ -1913,7 +1931,7 @@ DEF OMNI_WHEELS Robot {
       }
     }
     DEF BODY_TRANS Transform {
-      translation 0 0.03 0
+      translation 0 0.11 0
       children [
         Shape {
           appearance PBRAppearance {
@@ -1922,7 +1940,7 @@ DEF OMNI_WHEELS Robot {
             metalness 0
           }
           geometry Cylinder {
-            height 0.15
+            height 0.5
             radius 0.1
             subdivision 18
           }
@@ -1932,6 +1950,41 @@ DEF OMNI_WHEELS Robot {
   ]
   boundingObject USE BODY_TRANS
   physics Physics {
+    density -1
+    mass 5
+    centerOfMass [
+      0 0.25 0
+    ]
+    inertiaMatrix [
+      0.5235987755982989 0.07853981633974486 0.5235987755982989
+      0 0 0
+    ]
   }
   controller "cntrIP"
+}
+Robot {
+  translation 0 0.14 0
+  children [
+    Shape {
+      appearance Copper {
+      }
+      geometry DEF sphere_geom Sphere {
+        radius 0.14
+        subdivision 4
+      }
+    }
+  ]
+  name "robot(1)"
+  boundingObject USE sphere_geom
+  physics Physics {
+    density -1
+    mass 1
+    centerOfMass [
+      0 0 0
+    ]
+    inertiaMatrix [
+      0.1272345024703866 0.1272345024703866 0.1272345024703866
+      0 0 0
+    ]
+  }
 }
