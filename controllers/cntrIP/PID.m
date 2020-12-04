@@ -33,7 +33,7 @@ classdef PID < handle
             
             this.output = (this.Kp * this.p)...
                         + (this.Ki * this.i)...
-                        - (this.Kd * this.d(end));
+                        + (this.Kd * this.d(end));
             
             if this.output < this.limits(1) % ???
                 this.output = this.limits(1);

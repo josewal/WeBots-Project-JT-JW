@@ -1,132 +1,94 @@
 %desktop;
 TIME_STEP = 32;
 
+IMU = wb_robot_get_device(convertStringsToChars("IMU"));
+wb_inertial_unit_enable(IMU, TIME_STEP);
 
-sensor = wb_robot_get_device(convertStringsToChars("IMU"));
-wb_inertial_unit_enable(sensor, TIME_STEP);
-
-receiver = wb_robot_get_device(convertStringsToChars("receiver"));
-wb_receiver_enable(receiver, TIME_STEP)
-
-motor_tags = ["wheel1", "wheel2", "wheel3", "wheel4"];
-for i = 1:4
+motor_tags = ["wheel1", "wheel2", "wheel3"];
+for i = 1:3
     motors(i) = Motor(motor_tags(i));
 end
 
 
-drivePID = PID(-0.3, -0.0, -1);
-drivePID.setLimits(-4, 4);
-drivePID.enable();
-distance = 0;
-desired_distance = 100;
+pitchXPID = PID(30, 10, 0);
+pitchXPID.enable();
+pitchXPID.setLimits(-20,20);
+desired_pitchX = 0;
+prev_desired_pitchX = 0;
+desired_xspeed = 0;
 
+pitchYPID = PID(30, 10, 0);
+pitchYPID.enable();
+pitchYPID.setLimits(-20,20);
+desired_pitchY = 0;
+prev_desired_pitchY = 0;
+desired_yspeed = 0;
 
-speedPID = PID(0.25, 0.0002, 0.3);
-speedPID.setLimits(-0.4, 0.4);
-speedPID.enable();
-velocity = 0;
-desired_velocity = 0;
-prev_desired_velocity = 0;
-
-
-pitchPID = PID(115,25,10);
-pitchPID.enable();
-desired_pitch = 0;
-prev_desired_pitch = 0;
-
-
-sample_eP = 0;
-sample_setpointP = 0;
-sample_eV = 0;
-sample_setpointV = 0;
-sample_eD = 0;
-sample_setpointD = 0;
-
-msg = [];
-
-
+sample_setpointX = 0;
+sample_positionX = 0;
+sample_setpointY = 0;
+sample_positionY = 0;
 t = 0;
-time_interval = 0;
+
+velocity = 1;
+speed = [0,0,0];
+heading = 0;
+
 
 fig = figure();
-tic;
 while wb_robot_step(TIME_STEP) ~= -1
-    t = t + 1;
-    while wb_receiver_get_queue_length(receiver) > 0
-        pointer = wb_receiver_get_data(receiver);
-        setdatatype(pointer, 'doublePtr', 1, 1);
-        msg = get(pointer, 'Value');
-        wb_receiver_next_packet(receiver);
+    
+    
+    pitch_roll_yaw = wb_inertial_unit_get_roll_pitch_yaw(IMU);
+    
+    pitchXPID.update(pitch_roll_yaw(1),0.0);
+    if abs(pitchXPID.e) > 0.001
+      desired_xspeed = pitchXPID.output;
     end
     
-    if size(msg) == [1,1]
-        velocity = msg;
+    pitchYPID.update(pitch_roll_yaw(2),0)
+    
+    if abs(pitchYPID.e) > 0.001
+      desired_yspeed = pitchYPID.output;
     end
     
-    time_interval = toc;
-    distance = distance + velocity*time_interval;
-    tic;
+    velocity = norm([desired_xspeed,desired_yspeed]);
     
-    pitch_roll_yaw = wb_inertial_unit_get_roll_pitch_yaw(sensor);
-    pitch = pitch_roll_yaw(1);
     
-    drivePID.update(distance, desired_distance);
-    desired_velocity = 0*prev_desired_velocity + 1*drivePID.output;
-    prev_desired_velocity = desired_velocity;
+    if velocity ~= 0
+      if desired_xspeed > 0;
+          heading = asin(desired_yspeed/velocity)+pi;
+      else
+          heading = asin(desired_yspeed/velocity);
+      end
+     else
+       heading = 0;
+     end
+      
+    
+    speed(1) = velocity * sin(0 - heading);
+    speed(2) = velocity * sin(((2*pi)/3) - heading);
+    speed(3) = velocity * sin(((4*pi)/3) - heading);
+    
 
-    speedPID.update(velocity, desired_velocity);
-    desired_pitch = 0.9*prev_desired_pitch + 0.1*speedPID.output;
-    prev_desired_pitch = desired_pitch;
-    
-    
-    pitchPID.update(pitch, desired_pitch);
-    
-    desired_motor_speed = pitchPID.output;
-    
-    
-    if distance > 90
-    desired_distance = 80;
-    end
-    
-    if  ((t > 0) && (t < 800)) && false
-        fig = subplot(3,1,1);
-        sample_eP = [sample_eP, pitch];
-        sample_setpointP = [sample_setpointP, desired_pitch];
-        
-        plot(sample_setpointP, "g-")
-        hold on
-        plot(sample_eP, "b-");
-        grid on
-        axis([0 inf -inf inf]);
-        hold off
-        
-        sample_eV = [sample_eV, velocity];
-        sample_setpointV = [sample_setpointV, desired_velocity];
-        
-        fig = subplot(3,1,2);
-        plot(sample_setpointV, "g-")
-        hold on
-        plot(sample_eV, "b-");
-        grid on
-        axis([0 inf -inf inf]);
-        hold off
-        
-        sample_eD = [sample_eD, distance];
-        sample_setpointD = [sample_setpointD, desired_distance];
-        
-        fig = subplot(3,1,3);
-        plot(sample_setpointD, "g-")
-        hold on
-        plot(sample_eD, "b-");
-        grid on
-        axis([0 inf -inf inf]);
-        hold off
-    end
-    
-    
     for i = 1:length(motors)
-        motors(i).run(-desired_motor_speed);
+        motors(i).run(speed(i));
     end
     
-    drawnow;
+    
+    sample_setpointX = [sample_setpointX(end), pitchXPID.setpoint];
+    sample_positionX = [sample_positionX(end), pitchXPID.input];
+
+    sample_setpointY = [sample_setpointY(end), pitchYPID.setpoint];
+    sample_positionY = [sample_positionY(end), pitchYPID.input];
+    
+    t = [t(end), t(end) + 1];
+    
+    hold on
+    plot3(sample_setpointX, t, sample_setpointY, "g-")
+    plot3(sample_positionX, t, sample_positionY,  "b-");
+    grid on
+    
+
+drawnow;
 end
