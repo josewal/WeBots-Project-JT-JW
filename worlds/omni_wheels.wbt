@@ -13,8 +13,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.003013650647295542 -0.9995999789983664 -0.02812116456055332 2.928159052268765
-  position -0.4021707136408125 0.4730052773819895 -1.489876267532136
+  orientation -0.02107240491253579 -0.9992294913865434 -0.03311158852413813 2.0087724523163244
+  position -0.7405857456899324 0.4137956167896504 -0.31417197624311344
   follow "robot"
 }
 TexturedBackground {
@@ -28,6 +28,149 @@ Robot {
   translation 0 0.28 0
   rotation 1 0 0 -1.5707953071795862
   children [
+    DEF MOMENT_WHEEL HingeJoint {
+      jointParameters HingeJointParameters {
+        axis 0 0 1
+        anchor 0 0 0.11
+      }
+      device [
+        RotationalMotor {
+          name "arm motor"
+          maxVelocity 1000
+          maxTorque 100
+        }
+      ]
+      endPoint Solid {
+        translation 0 0 0.11
+        rotation 1 0 0 1.5708
+        children [
+          Solid {
+            translation 0.11 0 0
+            children [
+              Shape {
+                appearance BrushedSteel {
+                }
+                geometry DEF small_weight_geom Cylinder {
+                  height 0.025
+                  radius 0.01
+                }
+              }
+            ]
+            boundingObject USE small_weight_geom
+            physics Physics {
+              density -1
+              mass 5
+              centerOfMass [
+                0 0 0
+              ]
+              inertiaMatrix [
+                6.054110842855331e-07 3.926990816987242e-07 6.054110842855331e-07
+                0 0 0
+              ]
+            }
+          }
+          Solid {
+            translation -0.11 0 0
+            children [
+              Shape {
+                appearance BrushedSteel {
+                }
+                geometry DEF small_weight_geom Cylinder {
+                  height 0.025
+                  radius 0.01
+                }
+              }
+            ]
+            name "solid(1)"
+            boundingObject USE small_weight_geom
+            physics Physics {
+              density -1
+              mass 5
+              centerOfMass [
+                0 0 0
+              ]
+              inertiaMatrix [
+                6.054110842855331e-07 3.926990816987242e-07 6.054110842855331e-07
+                0 0 0
+              ]
+            }
+          }
+          Solid {
+            translation 0 0 0.11
+            children [
+              Shape {
+                appearance BrushedSteel {
+                }
+                geometry DEF small_weight_geom Cylinder {
+                  height 0.025
+                  radius 0.01
+                }
+              }
+            ]
+            name "solid(2)"
+            boundingObject USE small_weight_geom
+            physics Physics {
+              density -1
+              mass 5
+              centerOfMass [
+                0 0 0
+              ]
+              inertiaMatrix [
+                6.054110842855331e-07 3.926990816987242e-07 6.054110842855331e-07
+                0 0 0
+              ]
+            }
+          }
+          Solid {
+            translation 0 0 -0.11
+            children [
+              Shape {
+                appearance BrushedSteel {
+                }
+                geometry DEF small_weight_geom Cylinder {
+                  height 0.025
+                  radius 0.01
+                }
+              }
+            ]
+            name "solid(3)"
+            boundingObject USE small_weight_geom
+            physics Physics {
+              density -1
+              mass 5
+              centerOfMass [
+                0 0 0
+              ]
+              inertiaMatrix [
+                6.054110842855331e-07 3.926990816987242e-07 6.054110842855331e-07
+                0 0 0
+              ]
+            }
+          }
+          Shape {
+            appearance ScrewThread {
+            }
+            geometry DEF flywheel_geom Cylinder {
+              height 0.01
+              radius 0.09
+            }
+          }
+        ]
+        name "solid(2)"
+        boundingObject USE flywheel_geom
+        physics Physics {
+          density -1
+          mass 1
+          centerOfMass [
+            0 0 0
+          ]
+          inertiaMatrix [
+            0.0019215666002914134 0.0038349519697141034 0.0019215666002914134
+            0 0 0
+          ]
+        }
+      }
+    }
     Shape {
       appearance MetalPipePaint {
       }
@@ -46,7 +189,7 @@ Robot {
         }
       ]
       endPoint Solid {
-        translation 0 0 -0.219955
+        translation 0 1.776122211273861e-20 -0.219955
         rotation 1 0 0 0
         children [
           Shape {
