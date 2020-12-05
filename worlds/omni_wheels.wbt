@@ -13,8 +13,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.005249056204116335 -0.9994782658055428 0.0318691636431019 3.467906958577717
-  position 0.22275044565666086 0.45964927224695346 -1.2990201598191142
+  orientation -0.003013650647295542 -0.9995999789983664 -0.02812116456055332 2.928159052268765
+  position -0.4021707136408125 0.4730052773819895 -1.489876267532136
   follow "robot"
 }
 TexturedBackground {
@@ -28,6 +28,13 @@ Robot {
   translation 0 0.28 0
   rotation 1 0 0 -1.5707953071795862
   children [
+    Shape {
+      appearance MetalPipePaint {
+      }
+      geometry DEF body_geometry Box {
+        size 0.1 0.1 0.2
+      }
+    }
     DEF wheel HingeJoint {
       jointParameters HingeJointParameters {
         anchor 0 0 -0.22
@@ -73,17 +80,17 @@ Robot {
     DEF MOMENT_WHEEL HingeJoint {
       jointParameters HingeJointParameters {
         axis 0 1 0
-        anchor 0 0 0.2
+        anchor 0 0 0.25
       }
       device [
         RotationalMotor {
           name "arm motor"
           maxVelocity 1000
-          maxTorque 50
+          maxTorque 100
         }
       ]
       endPoint Solid {
-        translation 0 0 0.2
+        translation 0 0 0.25
         children [
           Solid {
             translation 0.11 0 0
@@ -100,7 +107,7 @@ Robot {
             boundingObject USE small_weight_geom
             physics Physics {
               density -1
-              mass 2.5
+              mass 5
               centerOfMass [
                 0 0 0
               ]
@@ -126,7 +133,7 @@ Robot {
             boundingObject USE small_weight_geom
             physics Physics {
               density -1
-              mass 2.5
+              mass 5
               centerOfMass [
                 0 0 0
               ]
@@ -152,7 +159,7 @@ Robot {
             boundingObject USE small_weight_geom
             physics Physics {
               density -1
-              mass 2.5
+              mass 5
               centerOfMass [
                 0 0 0
               ]
@@ -178,7 +185,7 @@ Robot {
             boundingObject USE small_weight_geom
             physics Physics {
               density -1
-              mass 2.5
+              mass 5
               centerOfMass [
                 0 0 0
               ]
@@ -211,24 +218,16 @@ Robot {
         }
       }
     }
-    Shape {
-      appearance MetalPipePaint {
-      }
-      geometry DEF body_geometry Cylinder {
-        height 0.2
-        radius 0.05
-      }
-    }
   ]
   boundingObject USE body_geometry
   physics Physics {
     density -1
-    mass 1.5707963267948968
+    mass 1
     centerOfMass [
       0 0 0
     ]
     inertiaMatrix [
-      0.0062177354602298 0.0019634954084936213 0.0062177354602298
+      0.008333333333333337 0.008333333333333337 0.003333333333333335
       0 0 0
     ]
   }

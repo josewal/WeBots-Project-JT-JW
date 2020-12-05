@@ -25,9 +25,9 @@ wheelPID.setLimits(-50,50);
 desired_pitchY = 0;
 
 
-pitchXPID = PID(100, 100, 100);
+pitchXPID = PID(700, 100, 2250)
 pitchXPID.enable();
-pitchXPID.setLimits(-50,50);
+pitchXPID.setLimits(-100,100)
 desired_pitchX = 0;
 
 sample_setpointX = 0;
