@@ -15,7 +15,7 @@ end
 velocityPID = PID(0.02, 0, 0.01);
 velocityPID.enable();
 velocityPID.setLimits(-1,1);
-desired_velocity = 1;
+desired_velocity = 0.5;
 velocity = [0,0];
 
 
@@ -30,7 +30,7 @@ pitchXPID.enable();
 pitchXPID.setLimits(-100,100)
 desired_pitchX = 0;
 
-yawPID = PID(5, 0, 0);
+yawPID = PID(1, 0, 1);
 yawPID.enable();
 yawPID.setLimits(-50,50)
 desired_yaw = 0;
@@ -54,7 +54,7 @@ while wb_robot_step(TIME_STEP) ~= -1
     wheelPID.update(pitch_roll_yaw(1), desired_pitchY);
     speeds(2) = wheelPID.output;
 
-     if abs(yawPID.e(end)) > 0.1
+     if abs(yawPID.e(end)) > 5
       desired_pitchX = yawPID.e(end)*0.1;
      else 
        desired_pitchX = 0;
@@ -63,10 +63,10 @@ while wb_robot_step(TIME_STEP) ~= -1
     pitchXPID.update(pitch_roll_yaw(2),desired_pitchX);
     speeds(1) = -pitchXPID.output;
     
-    if (yawPID.input < 1) && (velocityPID.input > 0.5) && (t(end ) < 300)
+    if (yawPID.input < 1) && (t(end ) < 500)
     desired_yaw = desired_yaw + 0.01;
-    elseif (yawPID.input > -1) && (velocityPID.input > 0.5) && (t(end )> 300)
-    desired_yaw = desired_yaw - 0.01;
+    elseif (yawPID.input > -2) && (t(end )> 1000)
+    desired_yaw = desired_yaw -0.01;
     end
     
     yawPID.update(pitch_roll_yaw(3),desired_yaw);
@@ -80,17 +80,17 @@ while wb_robot_step(TIME_STEP) ~= -1
     
       
 
-    sample_setpointX = [sample_setpointX(end), pitchXPID.setpoint(end)];
-    sample_positionX = [sample_positionX(end), pitchXPID.input];
+    %sample_setpointX = [sample_setpointX(end), yawPID.setpoint(end)];
+    %sample_positionX = [sample_positionX(end), yawPID.input];
     
     
     t = [t(end), t(end) + 1];
     
 
-    hold on
-    plot(t, sample_setpointX, "b-");
-    plot(t, sample_positionX, "r-");
-    axis([t(end)-100, t(end), -inf, inf]);
+    %hold on
+    %plot(t, sample_setpointX, "b-");
+    %plot(t, sample_positionX, "r-");
+    %axis([t(end)-100, t(end), -inf, inf]);
     
 
 drawnow;
