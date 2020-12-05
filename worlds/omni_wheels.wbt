@@ -13,8 +13,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.02107240491253579 -0.9992294913865434 -0.03311158852413813 2.0087724523163244
-  position -0.7405857456899324 0.4137956167896504 -0.31417197624311344
+  orientation -0.06173392629486832 -0.9795373584566984 -0.19156065810049147 2.5300452275064655
+  position -0.9883587246800145 1.0039424533580759 -1.2827856420105948
   follow "robot"
 }
 TexturedBackground {
@@ -35,7 +35,7 @@ Robot {
       }
       device [
         RotationalMotor {
-          name "arm motor"
+          name "yaw motor"
           maxVelocity 1000
           maxTorque 100
         }

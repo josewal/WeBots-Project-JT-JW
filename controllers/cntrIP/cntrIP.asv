@@ -4,7 +4,7 @@ TIME_STEP = 32;
 IMU = wb_robot_get_device(convertStringsToChars("IMU"));
 wb_inertial_unit_enable(IMU, TIME_STEP);
 
-motor_tags = ["arm motor", "wheel", "yaw motor"];
+motor_tags = ["arm motor", "wheel"];
 for i = 1:length(motor_tags);
     motors(i) = Motor(motor_tags(i));
 end
@@ -12,10 +12,10 @@ end
 
 
 
-velocityPID = PID(0.02, 0, 0.01);
+velocityPID = PID(0.005, 0.01, 0.1);
 velocityPID.enable();
 velocityPID.setLimits(-1,1);
-desired_velocity = 1;
+desired_velocity = 0;
 velocity = [0,0];
 
 
@@ -30,16 +30,16 @@ pitchXPID.enable();
 pitchXPID.setLimits(-100,100)
 desired_pitchX = 0;
 
-yawPID = PID(5, 0, 0);
+yawPID = PID(700, 100, 2250);
 yawPID.enable();
-yawPID.setLimits(-50,50)
+yawPID.setLimits(-100,100)
 desired_yaw = 0;
 
 sample_setpointX = 0;
 sample_positionX = 0;
 
 t = 0;
-speeds = [0,0,0];
+speeds = [0,0];
 
 while wb_robot_step(TIME_STEP) ~= -1
     
@@ -54,30 +54,27 @@ while wb_robot_step(TIME_STEP) ~= -1
     wheelPID.update(pitch_roll_yaw(1), desired_pitchY);
     speeds(2) = wheelPID.output;
 
-     if abs(yawPID.e(end)) > 0.1
-      desired_pitchX = yawPID.e(end)*0.1;
-     else 
-       desired_pitchX = 0;
-     end
-     
+    
     pitchXPID.update(pitch_roll_yaw(2),desired_pitchX);
     speeds(1) = -pitchXPID.output;
     
-    if (yawPID.input < 1) && (velocityPID.input > 0.5) && (t(end ) < 300)
-    desired_yaw = desired_yaw + 0.01;
-    elseif (yawPID.input > -1) && (velocityPID.input > 0.5) && (t(end )> 300)
-    desired_yaw = desired_yaw - 0.01;
-    end
-    
-    yawPID.update(pitch_roll_yaw(3),desired_yaw);
-    speeds(3) = speeds(3) + yawPID.output;
+    pitchXPID.update(pitch_roll_yaw(3),desired_yaw);
+    speeds(1) = -pitchXPID.output;
     
 
     for i = 1:length(motors)
         motors(i).run(speeds(i));
     end
     
-    
+    if t(end) == 100
+        desired_pitchX = 0.05;
+    elseif t(end) == 120
+        desired_pitchX = 0
+    elseif t(end) == 250
+      desired_pitchX = -0.05;
+    elseif t(end) == 280
+       desired_pitchX = 0;
+       end
       
 
     sample_setpointX = [sample_setpointX(end), pitchXPID.setpoint(end)];
@@ -90,7 +87,7 @@ while wb_robot_step(TIME_STEP) ~= -1
     hold on
     plot(t, sample_setpointX, "b-");
     plot(t, sample_positionX, "r-");
-    axis([t(end)-100, t(end), -inf, inf]);
+    axis([0 inf -0.2 0.2]);
     
 
 drawnow;
