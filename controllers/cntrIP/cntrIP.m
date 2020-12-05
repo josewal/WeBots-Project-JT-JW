@@ -4,90 +4,82 @@ TIME_STEP = 32;
 IMU = wb_robot_get_device(convertStringsToChars("IMU"));
 wb_inertial_unit_enable(IMU, TIME_STEP);
 
-motor_tags = ["wheel1", "wheel2", "wheel3"];
-for i = 1:3
+motor_tags = ["arm motor", "wheel"];
+for i = 1:length(motor_tags);
     motors(i) = Motor(motor_tags(i));
 end
 
 
-pitchXPID = PID(30, 10, 0);
-pitchXPID.enable();
-pitchXPID.setLimits(-20,20);
-desired_pitchX = 0;
-prev_desired_pitchX = 0;
-desired_xspeed = 0;
 
-pitchYPID = PID(30, 10, 0);
-pitchYPID.enable();
-pitchYPID.setLimits(-20,20);
+
+velocityPID = PID(0.005, 0.01, 0.1);
+velocityPID.enable();
+velocityPID.setLimits(-1,1);
+desired_velocity = 0;
+velocity = [0,0];
+
+
+wheelPID = PID(50, 50, 10);
+wheelPID.enable();
+wheelPID.setLimits(-50,50);
 desired_pitchY = 0;
-prev_desired_pitchY = 0;
-desired_yspeed = 0;
+
+
+pitchXPID = PID(100, 100, 100);
+pitchXPID.enable();
+pitchXPID.setLimits(-50,50);
+desired_pitchX = 0;
 
 sample_setpointX = 0;
 sample_positionX = 0;
-sample_setpointY = 0;
-sample_positionY = 0;
+
 t = 0;
+speeds = [0,0];
 
-velocity = 1;
-speed = [0,0,0];
-heading = 0;
-
-
-fig = figure();
 while wb_robot_step(TIME_STEP) ~= -1
-    
     
     pitch_roll_yaw = wb_inertial_unit_get_roll_pitch_yaw(IMU);
     
-    pitchXPID.update(pitch_roll_yaw(1),0.0);
-    if abs(pitchXPID.e) > 0.001
-      desired_xspeed = pitchXPID.output;
-    end
-    
-    pitchYPID.update(pitch_roll_yaw(2),0)
-    
-    if abs(pitchYPID.e) > 0.001
-      desired_yspeed = pitchYPID.output;
-    end
-    
-    velocity = norm([desired_xspeed,desired_yspeed]);
+    velocity = [velocity(2), velocity(2) * 0 ...
+                             + 1 * (speeds(2)*0.05)];
+    velocityPID.update(velocity(end), desired_velocity);
+    desired_pitchY = -velocityPID.output;
     
     
-    if velocity ~= 0
-      if desired_xspeed > 0;
-          heading = asin(desired_yspeed/velocity)+pi;
-      else
-          heading = asin(desired_yspeed/velocity);
-      end
-     else
-       heading = 0;
-     end
-      
+    wheelPID.update(pitch_roll_yaw(1), desired_pitchY);
+    speeds(2) = wheelPID.output;
+
     
-    speed(1) = velocity * sin(0 - heading);
-    speed(2) = velocity * sin(((2*pi)/3) - heading);
-    speed(3) = velocity * sin(((4*pi)/3) - heading);
+    pitchXPID.update(pitch_roll_yaw(2),desired_pitchX);
+    speeds(1) = -pitchXPID.output;
     
 
     for i = 1:length(motors)
-        motors(i).run(speed(i));
+        motors(i).run(speeds(i));
     end
     
-    
-    sample_setpointX = [sample_setpointX(end), pitchXPID.setpoint];
-    sample_positionX = [sample_positionX(end), pitchXPID.input];
+    if t(end) == 100
+        desired_pitchX = 0.05;
+    elseif t(end) == 120
+        desired_pitchX = 0
+    elseif t(end) == 250
+      desired_pitchX = -0.05;
+    elseif t(end) == 280
+       desired_pitchX = 0;
+       end
+      
 
-    sample_setpointY = [sample_setpointY(end), pitchYPID.setpoint];
-    sample_positionY = [sample_positionY(end), pitchYPID.input];
+    sample_setpointX = [sample_setpointX(end), pitchXPID.setpoint(end)];
+    sample_positionX = [sample_positionX(end), pitchXPID.input];
+    
     
     t = [t(end), t(end) + 1];
     
+
     hold on
-    plot3(sample_setpointX, t, sample_setpointY, "g-")
-    plot3(sample_positionX, t, sample_positionY,  "b-");
-    grid on
+    plot(t, sample_setpointX, "b-");
+    plot(t, sample_positionX, "r-");
+    axis([0 inf -0.2 0.2]);
     
 
 drawnow;
