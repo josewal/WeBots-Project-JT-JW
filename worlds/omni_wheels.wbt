@@ -13,8 +13,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.06173392629486832 -0.9795373584566984 -0.19156065810049147 2.5300452275064655
-  position -0.9883587246800145 1.0039424533580759 -1.2827856420105948
+  orientation -0.058588243386348826 -0.9797234251552286 -0.19159704574708103 2.5594341677886545
+  position -1.3331867156427173 1.2804784740687027 -1.868587174357993
   follow "robot"
 }
 TexturedBackground {
@@ -42,7 +42,7 @@ Robot {
       ]
       endPoint Solid {
         translation 0 0 0.11
-        rotation 1 0 0 1.5708
+        rotation 1 -1.5700895750559031e-16 7.850447875279516e-17 1.5707999999999998
         children [
           Solid {
             translation 0.11 0 0
@@ -189,7 +189,7 @@ Robot {
         }
       ]
       endPoint Solid {
-        translation 0 1.776122211273861e-20 -0.219955
+        translation 0 -2.1255444778399413e-17 -0.219955
         rotation 1 0 0 0
         children [
           Shape {
