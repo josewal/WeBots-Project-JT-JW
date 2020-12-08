@@ -28,7 +28,11 @@ classdef PID < handle
         
         function compute(this)
             this.p = this.e(end);
+            
+            if (this.i + this.e(end) > this.limits(1)) && (this.i + this.e(end) < this.limits(2))
             this.i = this.i + this.e(end);
+            end
+            
             this.d = [this.d(end), this.e(end) - this.e(end-1)];
             
             this.output = (this.Kp * this.p)...

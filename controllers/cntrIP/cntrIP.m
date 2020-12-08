@@ -4,6 +4,9 @@ TIME_STEP = 32;
 IMU = wb_robot_get_device(convertStringsToChars("IMU"));
 wb_inertial_unit_enable(IMU, TIME_STEP);
 
+acc = wb_robot_get_device(convertStringsToChars("accelerometer"));
+wb_accelerometer_enable(acc, TIME_STEP);
+
 motor_tags = ["arm motor", "wheel", "yaw motor"];
 for i = 1:length(motor_tags);
     motors(i) = Motor(motor_tags(i));
@@ -25,48 +28,80 @@ pitchPID.setLimits(-50,50);
 desired_pitch = 0;
 
 
-rollPID = PID(700, 100, 2250);
+rollPID = PID(700, 100, 700);
 rollPID.enable();
 rollPID.setLimits(-100,100)
 desired_roll = 0;
 
 
-yawPID = PID(5, 0, 1);
+yawPID = PID(5, 0.25, 1);
 yawPID.enable();
 yawPID.setLimits(-50,50)
 desired_yaw = 0;
 
+bankPID = PID(0.1, 0.125, 0.02);
+bankPID.enable();
+bankPID.setLimits(-0.2,0.2)
+desired_bank = 0;
+
 sample_setpoint = 0;
 sample_position = 0;
+sample_output = 0;
 
 t = 0;
 speeds = [0,0,0];
+balance_angle_LF = [0,0];
 
 while wb_robot_step(TIME_STEP) ~= -1
     
     pitch_roll_yaw = wb_inertial_unit_get_roll_pitch_yaw(IMU);
     
-    velocity = [velocity(2), velocity(2) * 0 ...
-                             + 1 * (speeds(2)*0.05)];
+    acc_x_y_z = wb_accelerometer_get_values(acc);
+    balance_vector = [acc_x_y_z(1), -acc_x_y_z(3)];
+    
+    
+    if balance_vector(1) > 0
+    balance_angle = +(balance_vector(1)/norm(balance_vector));
+    elseif balance_vector(1) < 0
+    balance_angle = +(balance_vector(1)/norm(balance_vector));
+    else 
+    balance_angle = 0;
+    end
+    
+    balance_angle_LF = [balance_angle_LF(end),...
+                        0.9*balance_angle_LF(end) + 0.1*balance_angle];
+    
+    
+    if speeds(1) > 20
+    desired_bank = -0.05;
+    elseif speeds(1) < -20
+    desired_bank = 0.05;
+    else
+    desired_bank = 0
+    end
+    
+    
+    if t(end) > 20            
+    bankPID.update(-balance_angle_LF(end), desired_bank);
+    desired_roll = bankPID.output;
+    else
+    desired_roll = 0;
+    end
+    
+    velocity = speeds(2) * 0.05;
     velocityPID.update(velocity(end), desired_velocity);
     desired_pitch = -velocityPID.output;
-    
-    if t(end) > 50
-    desired_yaw = -2;
-    end
-
-    
-    
     
     pitchPID.update(pitch_roll_yaw(1), desired_pitch);
     speeds(2) = pitchPID.output;
     
-    %if  abs(yawPID.e(end)) > 0.2
-    %desired_roll = -0.5*yawPID.e(end);
-    %end
-    
     rollPID.update(pitch_roll_yaw(2),desired_roll);
-    speeds(1) = -rollPID.output;
+    speeds(1) = -rollPID.output
+    
+    
+    if t(end) > 150
+    desired_yaw = desired_yaw - 0.01;
+    end
     
     yawPID.update(pitch_roll_yaw(3),desired_yaw);
     speeds(3) = yawPID.output;
@@ -80,17 +115,23 @@ while wb_robot_step(TIME_STEP) ~= -1
     
       
 
-    %sample_setpoint = [sample_setpoint(end), rollPID.setpoint(end)];
-    %sample_position = [sample_position(end), rollPID.input];
+    sample_setpoint = [sample_setpoint(end), bankPID.setpoint(end)];
+    sample_position = [sample_position(end), bankPID.input];
+    sample_output = [sample_output(end), bankPID.output];
     
     
     t = [t(end), t(end) + 1];
     
-
-    %hold on
-    %plot(t, sample_setpoint, "b-");
-    %plot(t, sample_position, "r-");
-    %axis([t(end)-100, t(end), -inf, inf]);
+    subplot(1,2,1);
+    plot([0,balance_vector(1)], [0,balance_vector(2)], "-r");
+    axis ([-10, 10, -10, 10])
+    
+    subplot(1,2,2);
+    hold on
+    plot(t, sample_setpoint, "b-");
+    plot(t, sample_position, "r-");
+    plot(t, sample_output, "g-");
+    axis([t(end)-100, t(end), -inf, inf]);
     
 
 drawnow;

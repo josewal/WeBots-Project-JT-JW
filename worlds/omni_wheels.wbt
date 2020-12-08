@@ -13,8 +13,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.058588243386348826 -0.9797234251552286 -0.19159704574708103 2.5594341677886545
-  position -1.3331867156427173 1.2804784740687027 -1.868587174357993
+  orientation -0.00013906033323904485 -0.9998576108987671 0.0168741989449338 3.1580719408654683
+  position 0.009779104726101218 0.3606394966914726 -1.4844913325037412
   follow "robot"
 }
 TexturedBackground {
@@ -25,9 +25,12 @@ RectangleArena {
   floorSize 50 50
 }
 Robot {
-  translation 0 0.28 0
+  translation 0 0.27 -1.01962e-08
   rotation 1 0 0 -1.5707953071795862
   children [
+    Accelerometer {
+      translation 0 0 0.0909
+    }
     DEF MOMENT_WHEEL HingeJoint {
       jointParameters HingeJointParameters {
         axis 0 0 1
@@ -42,7 +45,7 @@ Robot {
       ]
       endPoint Solid {
         translation 0 0 0.11
-        rotation 1 -1.5700895750559031e-16 7.850447875279516e-17 1.5707999999999998
+        rotation 1 7.850447875279522e-17 5.495313512695665e-16 1.5707999999999995
         children [
           Solid {
             translation 0.11 0 0
@@ -189,7 +192,7 @@ Robot {
         }
       ]
       endPoint Solid {
-        translation 0 -2.1255444778399413e-17 -0.219955
+        translation 0 0 -0.22
         rotation 1 0 0 0
         children [
           Shape {
