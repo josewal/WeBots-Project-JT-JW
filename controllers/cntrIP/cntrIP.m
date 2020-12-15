@@ -9,6 +9,10 @@ wb_inertial_unit_enable(IMU, TIME_STEP);
 acc = wb_robot_get_device(convertStringsToChars("accelerometer"));
 wb_accelerometer_enable(acc, TIME_STEP);
 
+
+camera = wb_robot_get_device(convertStringsToChars("camera"));
+wb_camera_enable(camera, TIME_STEP);
+
 motor_tags = ["arm motor", "wheel", "yaw motor"];
 for i = 1:length(motor_tags);
     motors(i) = Motor(motor_tags(i));
@@ -80,6 +84,15 @@ while wb_robot_step(TIME_STEP) ~= -1
       end
     end
     
+    
+    image = wb_camera_get_image(camera);
+    [BW, masked] = createMask(image);
+    
+    BW = imfill(BW, 'holes');
+    imshow(BW, 'InitialMagnification', 'fit');
+    
+    
+    
     pitch_roll_yaw = wb_inertial_unit_get_roll_pitch_yaw(IMU);
     d = prev_pitch_roll_yaw(3) - pitch_roll_yaw(3);
     
@@ -137,10 +150,6 @@ while wb_robot_step(TIME_STEP) ~= -1
     for i = 1:length(motors)
         motors(i).run();
     end
-    
-    
-    
-    
     
     drawnow;
 end
