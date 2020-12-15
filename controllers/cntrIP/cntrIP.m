@@ -52,9 +52,36 @@ t = 0;
 speeds = [0,0,0];
 balance_angle_LF = [0,0];
 
+yaw = 0;
+prev_yaw = 0;
+pitch_roll_yaw = [0,0,0];
+prev_pitch_roll_yaw = [0,0,0];
+rotations = 0;
+hold on
 while wb_robot_step(TIME_STEP) ~= -1
+    t = [t(end), t(end) + 1];
     
     pitch_roll_yaw = wb_inertial_unit_get_roll_pitch_yaw(IMU);
+  
+    d = prev_pitch_roll_yaw(3) - pitch_roll_yaw(3);
+
+    if d > pi
+      rotations = rotations + 2*pi;
+      plot(t(end), rotations, "b*");
+    elseif d < -pi
+      rotations = rotations - 2*pi;
+      plot(t(end), rotations, "b*");
+    end
+  
+    prev_yaw = yaw;
+    yaw = pitch_roll_yaw(3) + rotations;
+    prev_pitch_roll_yaw = pitch_roll_yaw;
+    pitch_roll_yaw(3) = yaw;
+  
+    plot(t, [prev_yaw, yaw], "r-");
+    plot(t(end), d, "g*");
+    
+    
     
     acc_x_y_z = wb_accelerometer_get_values(acc);
     balance_vector = [acc_x_y_z(1), -acc_x_y_z(3)];
@@ -99,8 +126,8 @@ while wb_robot_step(TIME_STEP) ~= -1
     speeds(1) = -rollPID.output
     
     
-    if t(end) > 150
-    desired_yaw = desired_yaw - 0.01;
+    if t(end) > 30
+    desired_yaw = desired_yaw - 0.025;
     end
     
     yawPID.update(pitch_roll_yaw(3),desired_yaw);
@@ -115,23 +142,23 @@ while wb_robot_step(TIME_STEP) ~= -1
     
       
 
-    sample_setpoint = [sample_setpoint(end), bankPID.setpoint(end)];
-    sample_position = [sample_position(end), bankPID.input];
-    sample_output = [sample_output(end), bankPID.output];
+    %sample_setpoint = [sample_setpoint(end), bankPID.setpoint(end)];
+    %sample_position = [sample_position(end), bankPID.input];
+    %sample_output = [sample_output(end), bankPID.output];
     
     
-    t = [t(end), t(end) + 1];
     
-    subplot(1,2,1);
-    plot([0,balance_vector(1)], [0,balance_vector(2)], "-r");
-    axis ([-10, 10, -10, 10])
     
-    subplot(1,2,2);
-    hold on
-    plot(t, sample_setpoint, "b-");
-    plot(t, sample_position, "r-");
-    plot(t, sample_output, "g-");
-    axis([t(end)-100, t(end), -inf, inf]);
+    %subplot(1,2,1);
+    %plot([0,balance_vector(1)], [0,balance_vector(2)], "-r");
+    %axis ([-10, 10, -10, 10])
+    
+    %subplot(1,2,2);
+    %hold on
+    %plot(t, sample_setpoint, "b-");
+    %plot(t, sample_position, "r-");
+    %plot(t, sample_output, "g-");
+    %axis([t(end)-100, t(end), -inf, inf]);
     
 
 drawnow;
