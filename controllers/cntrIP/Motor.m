@@ -19,11 +19,14 @@ classdef Motor < handle
             wb_motor_set_velocity(this.wb_motor, this.speed);
         end
         
-        function run(this, speed)
-            this.speed = speed;
+        function run(this)
             if this.enable_bool
                 wb_motor_set_velocity(this.wb_motor, this.speed);
             end            
+        end
+        
+        function setSpeed(this, speed)
+            this.speed = speed;
         end
         
         function enable(this)

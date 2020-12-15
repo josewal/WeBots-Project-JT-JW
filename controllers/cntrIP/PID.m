@@ -39,15 +39,14 @@ classdef PID < handle
                         + (this.Ki * this.i)...
                         + (this.Kd * this.d(end));
             
-            if this.output < this.limits(1) % ???
+            if this.output < this.limits(1)
                 this.output = this.limits(1);
-            elseif this.output > this.limits(2) % ??
+            elseif this.output > this.limits(2)
                 this.output = this.limits(2); 
             end
         end
         
-        function update(this,input,setpoint)
-            this.setpoint = setpoint;
+        function update(this,input)
             this.input = input;
             this.e = [this.e(2:end), this.input - this.setpoint];
             
@@ -69,7 +68,7 @@ classdef PID < handle
          end
         
         function setLimits(this,min,max)
-            this.limits = [min, max]; %??
+            this.limits = [min, max];
         end
         
         function enable(this) 
