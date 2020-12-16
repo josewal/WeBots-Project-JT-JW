@@ -1,6 +1,11 @@
 %desktop;
 
+
+%======================================================%
+%INTIALIZATION OF SENSORS AND MOTORS
 TIME_STEP = 32;
+t = 0;
+
 wb_keyboard_enable(TIME_STEP);
 
 IMU = wb_robot_get_device(convertStringsToChars("IMU"));
@@ -17,62 +22,73 @@ motor_tags = ["arm motor", "wheel", "yaw motor"];
 for i = 1:length(motor_tags);
     motors(i) = Motor(motor_tags(i));
 end
+%======================================================%
 
 
+%======================================================%
+%INTIALIZATION OF PID CONTROLERS
 
-
+%FORWARD VELOCITY PID CONTROLLER
 velocityPID = PID(0.02, 0.0001, 0.01);
-velocityPID.enable();
+velocityPID.enable()
 velocityPID.setLimits(-1,1)
 velocityPID.setSetpoint(0)
-velocity = [0,0];
-
-
-pitchPID = PID(50, 50, 10);
-pitchPID.enable();
-pitchPID.setLimits(-50,50);
-
-
-rollPID = PID(700, 100, 700);
-rollPID.enable();
-rollPID.setLimits(-100,100)
-
-
-yawPID = PID(5, 0.25, 1);
-yawPID.enable();
-yawPID.setLimits(-50,50)
-
-
-bankPID = PID(0.12, 0.15, 0.02);
-bankPID.disable();
-bankPID.setLimits(-0.2,0.2)
-
-bankAnglePID = PID(0.0005, 0.001, 0.0001);
-bankAnglePID.enable()
-bankAnglePID.setLimits(-0.2,0.2);
-
-pathPID = PID(0.001, 0, 0.01);
-pathPID.enable()
-pathPID.setLimits(-0.05,0.05);
-
-desired_yaw = -pi/2;
 desired_velocity = 0;
 
-t = 0;
+%PITCH PID CONTROLLER
+pitchPID = PID(50, 50, 10);
+pitchPID.enable()
+pitchPID.setLimits(-50,50)
 
+%ROLL PID CONTROLLER
+rollPID = PID(700, 100, 700);
+rollPID.enable()
+rollPID.setLimits(-100,100)
+
+%YAW PID CONTROLLER
+yawPID = PID(5, 0.25, 1);
+yawPID.enable()
+yawPID.setLimits(-50,50)
+desired_yaw = -pi/2
+
+%BANKING INTO TURNS PID CONTROLLER
+bankPID = PID(0.12, 0.15, 0.02);
+bankPID.disable()
+bankPID.setLimits(-0.2,0.2)
+
+%BANK ANGLE PID CONTROLLER
+bankAnglePID = PID(0.0005, 0.001, 0.0001);
+bankAnglePID.enable()
+bankAnglePID.setLimits(-0.2,0.2)
+
+%PATH OFFSET PID CONTROLLER
+pathPID = PID(0.001, 0, 0.01);
+pathPID.enable()
+pathPID.setLimits(-0.05,0.05)
+%======================================================%
+
+
+%INITIALIZATION FOR LOWPASS FILTER
 balance_angle_LF = [0,0];
 
-sample_setpoint = 0;
-sample_position = 0;
-sample_output = 0;
-
-
+%INITIALIZATION FOR YAW OVERFLOW
 rotations = 0;
 prev_pitch_roll_yaw = [0,0,-pi/2];
 
 hold on
+
+
+
+%======================================================%
+%======================================================%
+%MAIN LOOP
+
 while wb_robot_step(TIME_STEP) ~= -1
     t = [t(end), t(end) + 1];
+    
+    if t(end) == 20
+        bankPID.enable();
+    end
     
     key = [wb_keyboard_get_key(), wb_keyboard_get_key()];
     for i = 1:2
@@ -92,6 +108,7 @@ while wb_robot_step(TIME_STEP) ~= -1
     input_image = wb_camera_get_image(camera);
     [path_offset, path_angle, gotLine] = lineRecognition(input_image);
     
+    
     pitch_roll_yaw = wb_inertial_unit_get_roll_pitch_yaw(IMU);
     d = prev_pitch_roll_yaw(3) - pitch_roll_yaw(3);
     
@@ -104,16 +121,15 @@ while wb_robot_step(TIME_STEP) ~= -1
     prev_pitch_roll_yaw = pitch_roll_yaw;
     pitch_roll_yaw(3) = pitch_roll_yaw(3) + rotations;
     
+    
     acc_x_y_z = wb_accelerometer_get_values(acc);
     balance_angle = getAccAngle(acc_x_y_z);
     
     balance_angle_LF = [balance_angle_LF(end),...
         0.9*balance_angle_LF(end) + 0.1*balance_angle];
     
-    if t(end) == 20
-        bankPID.enable();
-    end
     
+    %PID CONTROLLERS COMPUTATION
     pathPID.setSetpoint(path_offset);
     pathPID.update(0);
     desired_yaw = desired_yaw + pathPID.output;
@@ -150,3 +166,6 @@ while wb_robot_step(TIME_STEP) ~= -1
     
     drawnow;
 end
+
+%======================================================%
+%======================================================%

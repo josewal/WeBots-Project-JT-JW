@@ -50,7 +50,5 @@ function [offset, angle, gotLine] = lineRecognition(input_image)
     
     angle = max(min(dot(u,v)/(norm(u)*norm(v)),1),-1);
     
-    if x_end_midd < 32
-        angle = - angle
-    end
+    if x_en
 end

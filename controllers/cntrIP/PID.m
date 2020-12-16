@@ -16,6 +16,7 @@ classdef PID < handle
     end
       
     methods
+        
         function this = PID(Kp,Ki,Kd)
             this.Kp = Kp;
             this.Ki = Ki;
@@ -25,6 +26,7 @@ classdef PID < handle
             this.limits = [-inf, inf];
             this.enable_bool = true;
         end
+        
         
         function compute(this)
             this.p = this.e(end);
@@ -46,6 +48,7 @@ classdef PID < handle
             end
         end
         
+        
         function update(this,input)
             this.input = input;
             this.e = [this.e(2:end), this.input - this.setpoint];
@@ -57,23 +60,28 @@ classdef PID < handle
             end
         end
         
+        
         function setSetpoint(this,setpoint)
             this.setpoint = setpoint;
         end
+        
         
         function setTunings(this,tunings)
             this.Kp = tunings(1);
             this.Ki = tunings(2);
             this.Kd = tunings(3);
-         end
+        end
         
+         
         function setLimits(this,min,max)
             this.limits = [min, max];
         end
         
+        
         function enable(this) 
         this.enable_bool = true; 
         end
+        
         
         function disable(this)
         this.enable_bool = false;
