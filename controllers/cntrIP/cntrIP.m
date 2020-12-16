@@ -89,6 +89,8 @@ while wb_robot_step(TIME_STEP) ~= -1
     [BW, masked] = createMask(image);
     
     BW = imfill(BW, 'holes');
+%     se = strel('disk', 1);
+%     BW = imerode(BW, se);
     imshow(BW, 'InitialMagnification', 'fit');
     
     
