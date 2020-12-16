@@ -51,7 +51,11 @@ bankAnglePID = PID(0.0005, 0.001, 0.0001);
 bankAnglePID.enable()
 bankAnglePID.setLimits(-0.2,0.2);
 
-desired_yaw = 0;
+pathPID = PID(0.001, 0, 0.01);
+pathPID.enable()
+pathPID.setLimits(-0.05,0.05);
+
+desired_yaw = -pi/2;
 desired_velocity = 0;
 
 t = 0;
@@ -64,7 +68,7 @@ sample_output = 0;
 
 
 rotations = 0;
-prev_pitch_roll_yaw = [0,0,0];
+prev_pitch_roll_yaw = [0,0,-pi/2];
 
 hold on
 while wb_robot_step(TIME_STEP) ~= -1
@@ -72,28 +76,21 @@ while wb_robot_step(TIME_STEP) ~= -1
     
     key = [wb_keyboard_get_key(), wb_keyboard_get_key()];
     for i = 1:2
-      switch key(i)
-          case 315
-              desired_velocity = 0.5;
-          case 317
-              desired_velocity = -0.5;
-          case 314
-              desired_yaw = desired_yaw + 0.03;
-          case 316
-              desired_yaw = desired_yaw - 0.03;
-      end
+        switch key(i)
+            case 315
+                desired_velocity = 0.75;
+            case 317
+                desired_velocity = -0.75;
+            case 314
+                desired_yaw = desired_yaw + 0.03;
+            case 316
+                desired_yaw = desired_yaw - 0.03;
+        end
     end
     
     
-    image = wb_camera_get_image(camera);
-    [BW, masked] = createMask(image);
-    
-    BW = imfill(BW, 'holes');
-%     se = strel('disk', 1);
-%     BW = imerode(BW, se);
-    imshow(BW, 'InitialMagnification', 'fit');
-    
-    
+    input_image = wb_camera_get_image(camera);
+    [path_offset, path_angle, gotLine] = lineRecognition(input_image);
     
     pitch_roll_yaw = wb_inertial_unit_get_roll_pitch_yaw(IMU);
     d = prev_pitch_roll_yaw(3) - pitch_roll_yaw(3);
@@ -103,11 +100,9 @@ while wb_robot_step(TIME_STEP) ~= -1
     elseif d < -pi
         rotations = rotations - 2*pi;
     end
-    
-    
+
     prev_pitch_roll_yaw = pitch_roll_yaw;
     pitch_roll_yaw(3) = pitch_roll_yaw(3) + rotations;
-    
     
     acc_x_y_z = wb_accelerometer_get_values(acc);
     balance_angle = getAccAngle(acc_x_y_z);
@@ -115,13 +110,13 @@ while wb_robot_step(TIME_STEP) ~= -1
     balance_angle_LF = [balance_angle_LF(end),...
         0.9*balance_angle_LF(end) + 0.1*balance_angle];
     
-    
-    
-    
-    
     if t(end) == 20
         bankPID.enable();
     end
+    
+    pathPID.setSetpoint(path_offset);
+    pathPID.update(0);
+    desired_yaw = desired_yaw + pathPID.output;
     
     bankAnglePID.setSetpoint(0);
     bankAnglePID.update(motors(1).speed);
