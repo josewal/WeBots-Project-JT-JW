@@ -7,8 +7,8 @@ BW = imfill(BW, 'holes');
 P  = houghpeaks(H,20,'threshold',ceil(0.3*max(H(:))));
 
 lines = houghlines(BW,T,R,P,'FillGap',10,'MinLength',30);
-%imshow(BW, 'InitialMagnification', 'fit')
-%hold on
+imshow(BW, 'InitialMagnification', 'fit')
+hold on
 
 
 if length(lines) > 2
@@ -28,18 +28,18 @@ if length(lines) > 2
     x = [startpoint(1), midpoint(1), endpoint(1)];
     y = [startpoint(2),midpoint(2), endpoint(2)];
     
-    %for k = 1:length(lines)
-    %     xy = [lines(k).point1; lines(k).point2];
-    %    plot(xy(:,1),xy(:,2),'LineWidth',1,'Color','cyan');
-   % end
+    for k = 1:length(lines)
+         xy = [lines(k).point1; lines(k).point2];
+        plot(xy(:,1),xy(:,2),'LineWidth',1,'Color','cyan');
+    end
     
     
-    %plot(x, y,'-','LineWidth',2,'Color','red');
-    %plot([endpoint(1),32], [endpoint(2),endpoint(2)],'-','LineWidth',2,'Color','yellow');
-    %plot([midpoint(1),32], [midpoint(2),midpoint(2)],'-','LineWidth',2,'Color','magenta');
-    %plot([startpoint(1),32], [startpoint(2),startpoint(2)],'-','LineWidth',2,'Color','blue');
-    %plot([32,32], [64,0],'-','LineWidth',2,'Color','green');
-    %hold off
+    plot(x, y,'-','LineWidth',2,'Color','red');
+    plot([endpoint(1),32], [endpoint(2),endpoint(2)],'-','LineWidth',2,'Color','yellow');
+    plot([midpoint(1),32], [midpoint(2),midpoint(2)],'-','LineWidth',2,'Color','magenta');
+    plot([startpoint(1),32], [startpoint(2),startpoint(2)],'-','LineWidth',2,'Color','blue');
+    plot([32,32], [64,0],'-','LineWidth',2,'Color','green');
+    hold off
     
     offset = x(1) - 32;
     mid_offset = x(2) - 32; 

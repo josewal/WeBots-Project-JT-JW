@@ -13,10 +13,9 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.025714756336548968 0.9892687817289842 0.14382638423809102 3.4917148395947777
-  position -2.504969137082958 2.025373381755863 -5.81854750872279
+  orientation 0.0373601233427113 -0.9986898569833581 0.03496842493417742 1.5059943250600394
+  position -3.3571924778739954 0.29791032183763194 -0.38827135466890605
   follow "robot"
-  followType "Mounted Shot"
 }
 TexturedBackground {
 }
@@ -184,7 +183,7 @@ Robot {
             }
           }
           Shape {
-            appearance ScrewThread {
+            appearance Copper {
             }
             geometry DEF flywheel_geom Cylinder {
               height 0.01
@@ -208,7 +207,8 @@ Robot {
       }
     }
     Shape {
-      appearance MetalPipePaint {
+      appearance MattePaint {
+        baseColor 1 0 0
       }
       geometry DEF body_geometry Box {
         size 0.1 0.1 0.2
@@ -229,7 +229,7 @@ Robot {
         rotation 1 0 0 0
         children [
           Shape {
-            appearance DryMud {
+            appearance ReflectiveSurface {
             }
             geometry DEF wheele_geom Sphere {
               radius 0.05
@@ -375,7 +375,18 @@ Robot {
             }
           }
           Shape {
-            appearance ScrewThread {
+            appearance Appearance {
+              texture ImageTexture {
+                url [
+                  "C:/Users/josef/OneDrive/Desktop/VUT/Mechatronika 2020,21/1PA/WeBots GIT/WeBots-Project-JT-JW/face_smiley.jpg"
+                ]
+                repeatT FALSE
+              }
+              textureTransform TextureTransform {
+                center 0.1 0
+                scale 1 1.1
+                translation 0 -0.05
+              }
             }
             geometry DEF flywheel_geom Cylinder {
               height 0.01
