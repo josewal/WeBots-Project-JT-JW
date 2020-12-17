@@ -62,7 +62,7 @@ bankAnglePID.enable()
 bankAnglePID.setLimits(-0.2,0.2)
 
 %PATH OFFSET PID CONTROLLER
-pathPID = PID(0.001, 0, 0.01);
+pathPID = PID(0.001, 0.1, 0.01);
 pathPID.enable()
 pathPID.setLimits(-0.05,0.05)
 %======================================================%
@@ -94,9 +94,9 @@ while wb_robot_step(TIME_STEP) ~= -1
     for i = 1:2
         switch key(i)
             case 315
-                desired_velocity = 0.75;
+                desired_velocity = desired_velocity + 0.25;
             case 317
-                desired_velocity = -0.75;
+                desired_velocity = desired_velocity - 0.25;
             case 314
                 desired_yaw = desired_yaw + 0.03;
             case 316
@@ -106,8 +106,7 @@ while wb_robot_step(TIME_STEP) ~= -1
     
     
     input_image = wb_camera_get_image(camera);
-    [path_offset, path_angle, gotLine] = lineRecognition(input_image);
-    
+    [path_offset, path_angle, endpoint_offset, gotLine] = lineRecognition(input_image);
     
     pitch_roll_yaw = wb_inertial_unit_get_roll_pitch_yaw(IMU);
     d = prev_pitch_roll_yaw(3) - pitch_roll_yaw(3);
@@ -132,7 +131,13 @@ while wb_robot_step(TIME_STEP) ~= -1
     %PID CONTROLLERS COMPUTATION
     pathPID.setSetpoint(path_offset);
     pathPID.update(0);
+    if path_offset * path_angle > 0
+    desired_yaw = desired_yaw + 4*pathPID.output;
+    else
     desired_yaw = desired_yaw + pathPID.output;
+    end
+    
+    desired_velocity = 0.01 * (32 - abs(endpoint_offset));
     
     bankAnglePID.setSetpoint(0);
     bankAnglePID.update(motors(1).speed);

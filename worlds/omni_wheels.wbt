@@ -13,8 +13,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.09602044164121504 0.9581469249450014 0.26969342781288497 3.7991025691682956
-  position -3.728808909955787 3.266012949547135 -3.4882601730908513
+  orientation -0.036584020378230976 0.9841758964541268 0.17337651020735484 2.732073400727526
+  position 0.19480749559360477 2.8138388939524557 -4.5341528725832685
   follow "robot"
   followType "Mounted Shot"
 }
@@ -38,6 +38,9 @@ RectangleArena {
     textureTransform TextureTransform {
       translation 0 -0.2
     }
+  }
+  wallAppearance ShinyLeather {
+    colorOverride 1 0.3 0
   }
 }
 Robot {
